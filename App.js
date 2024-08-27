@@ -1,16 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Login from './src/components/Login/Login'
+import Login from './screens/Login/Login'
+import Cadastro from  './screens/Cadastro/Cadastro'
+
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator initialRouteName='Login'>
+      <Tab.Navigator initialRouteName='Cadastro'>
         <Tab.Screen name="Login" component={Login} />
+        <Tab.Screen name="Cadastro" component={Cadastro} />
       </Tab.Navigator>
     </NavigationContainer>
   );
