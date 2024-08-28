@@ -25,7 +25,7 @@ export default function Perfil({navigation}) {
     <View style={styles.container}>
         <View style={styles.perfil}>
             <View style={styles.logo}>
-                <Image style={styles.image} source={require('../../images/ClaraOswald.jpg')}/>
+                <Image style={styles.image} source={require('../images/ClaraOswald.jpg')}/>
             </View>
             <View style={styles.nome}>
                 <Text style={styles.text}>Clara Oswald</Text>
