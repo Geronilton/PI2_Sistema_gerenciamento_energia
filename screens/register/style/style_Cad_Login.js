@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     backgroundColor:'#C3C4C9',
     color: 'black',
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 15,
     width:320,
     height: 40,
     padding:10,
@@ -54,8 +54,11 @@ const styles = StyleSheet.create({
     fontSize: 35,
     margin: 10,
     color: 'white'
+  },
+  botaoSession:{
+    marginLeft:70,
+    marginBottom:20,
   }
-
 });
 
 
