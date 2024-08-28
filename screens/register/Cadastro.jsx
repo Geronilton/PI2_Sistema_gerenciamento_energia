@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import { Text, View, TextInput, TouchableOpacity } from 'react-native'
 import styles from './style/style_Cad_Login';
 
-export default function CadastroUser () {
+export default function CadastroUser ({navigation}) {
   
     const [name, setNome] = useState('');
     const [email, setEmail] = useState('');
@@ -61,7 +61,8 @@ export default function CadastroUser () {
             placeholder='Confirme sua Senha'
           /> 
   
-          <TouchableOpacity style={styles.botao}>
+          <TouchableOpacity style={styles.botao}
+          onPress={()=>{navigation.navigate('Menu')}}>
             <Text style={styles.textButton}>Cadastrar</Text>
           </TouchableOpacity>
         </View>
