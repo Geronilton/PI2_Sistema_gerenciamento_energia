@@ -49,21 +49,6 @@ export default function Perfil({ navigation }) {
                     keyExtractor={item => item.id.toString()}
                 />
             </View>
-            
-            <View>
-                <Button 
-                title='Home'
-                onPress={() => navigation.navigate('Home')} />
-                <Button 
-                title='Voltar' 
-                onPress={() => navigation.goBack()} />
-                <Button 
-                title='Tomadas' 
-                onPress={() => navigation.navigate('Tomadas')} />
-                <Button 
-                title='Perfil' 
-                onPress={() => navigation.navigate('Perfil')} />
-            </View>
         </View>
     );
 }
