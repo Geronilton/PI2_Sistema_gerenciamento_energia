@@ -10,8 +10,13 @@ const Stack = createNativeStackNavigator();
 
 function Menu() {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Perfil" component={Perfil} />
+    <Tab.Navigator >
+      <Tab.Screen 
+      name="Perfil" 
+      component={Perfil} 
+      />
+
+      
 
     </Tab.Navigator>
   );
@@ -26,8 +31,16 @@ export default function App() {
           component={Login}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="Cadastro" component={Cadastro} />
-        <Stack.Screen name="Menu" component={Menu} />
+        <Stack.Screen 
+        name="Cadastro"
+        component={Cadastro}
+        options={{ headerShown: false }}
+         />
+
+        <Stack.Screen 
+        name="Menu" 
+        component={Menu} 
+        options={{ headerShown: false }}/>
 
       </Stack.Navigator>
     </NavigationContainer>
