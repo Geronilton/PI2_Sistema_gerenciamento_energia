@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     padding:3,
     margin: 5,
     alignItems:'center',
-    width: 250,
+    width: 150,
     backgroundColor:'#3b93aa',
     borderRadius:10,
   },
@@ -43,10 +43,11 @@ const styles = StyleSheet.create({
     backgroundColor:'#C3C4C9',
     color: 'black',
     fontWeight: 'bold',
-    marginBottom: 7,
+    marginBottom: 10,
     width:320,
     height: 40,
     padding:10,
+    paddingLeft:20,
   },
 
   titleCadastro: {
