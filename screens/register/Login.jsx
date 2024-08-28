@@ -34,7 +34,8 @@ export default function LoginUser ({navigation}) {
           </TouchableOpacity>
         </View>
 
-          <TouchableOpacity style={styles.botao}>
+          <TouchableOpacity style={styles.botao}
+          onPress={() => { navigation.navigate('Menu') }}>
             <Text style={styles.textButton}>Login</Text>
           </TouchableOpacity>
         </View>
