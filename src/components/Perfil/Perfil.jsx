@@ -9,10 +9,11 @@ const DATA = [
     },
 ];
 
-const Item = ({ nome }) => {
+const Item = ({ id, nome }) => {
     return (
-        <View>
-            <Text style={styles.dados}>{nome}</Text>
+        <View style={styles.tabela}>
+            <Text style={styles.dados}>{id}</Text>
+            <Text style={styles.dados}> {nome}</Text>
         </View>
     );
 };
@@ -28,7 +29,7 @@ export default function Perfil({ navigation }) {
                     <Image style={styles.image} source={require('../../images/ClaraOswald.jpg')} />
                 </View>
                 <View style={styles.nome}>
-                    <Text style={styles.text}>Clara Oswald</Text>
+                    <Text style={styles.titlename}>Clara Oswald</Text>
                 </View>  
             </View>
 
@@ -38,14 +39,14 @@ export default function Perfil({ navigation }) {
             </View>
 
             <View>
-                <Text style={styles.dados}>Histórico de Consumo</Text>
+                <Text style={styles.historico}>Histórico de Consumo</Text>
             </View>
-            <View>
-                <Text style={styles.dados}>Data</Text>
+            <Text style={styles.tabdados}>Data</Text>
+            <View style={styles.tabela}>
                 <FlatList
-                    style={styles.tabela}
+                    
                     data={DATA}
-                    renderItem={({ item }) => <Item nome={item.nome} />}
+                    renderItem={({ item }) => <Item nome={item.nome} id={item.id}/>}
                     keyExtractor={item => item.id.toString()}
                 />
             </View>
