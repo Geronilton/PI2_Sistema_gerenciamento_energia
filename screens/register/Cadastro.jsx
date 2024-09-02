@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { auth, database } from '../../services/firebaseConfig';
+import { createUserWithEmailAndPassword } from '@react-native-firebase/auth';
+import { Text, View, TextInput, TouchableOpacity, Alert } from 'react-native'
 import styles from './style/style_Cad_Login';
 
 export default function CadastroUser({ navigation }) {
@@ -8,28 +10,25 @@ export default function CadastroUser({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  //   const Cadastrar = async () => {
-  //     try {
-  //       const data ={
-  //         name,
-  //         email,
-  //         password
-  //       }
-  //         // Enviar os dados para o servidor local
-  //       const response = await api.post('/register',data);
-  //       if (response.status === 200){
-  //         alert('Usuário criado com sucesso!');
-  //       }
-  //         // Limpar os campos do formulário após o envio
-  //         setNome('');
-  //         setEmail('');
-  //         setPassword('');
-  //     } catch (error) {
-  //         console.error('Erro ao criar usuário:', error);
-  //         alert('Erro ao criar usuário');
-  //     }
-  // };
+  const handleCreateUser = async () => {
+    try {
+      // Cria o usuário com email e senha
+      const userCredential = await auth().createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
 
+      // Salva informações adicionais no Firestore
+      await firestore().collection('users').doc(user.uid).set({
+        name: name,
+        email: email,
+      });
+
+      Alert.alert('Sucesso', 'Usuário criado e salvo com sucesso!');
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error);
+      Alert.alert('Erro', error.message);
+    }
+  };
+  
   return (
     <View style={styles.ScreenContainer}>
 
@@ -55,11 +54,11 @@ export default function CadastroUser({ navigation }) {
           placeholder='Senha'
         />
 
-        <TextInput style={styles.formTextInput}
+        {/* <TextInput style={styles.formTextInput}
           value={password}
           onChangeText={senha => setPassword(senha)}
           placeholder='Confirme sua Senha'
-        />
+        /> */}
 
         <View style={styles.botaoSession}>
           <TouchableOpacity
@@ -69,7 +68,7 @@ export default function CadastroUser({ navigation }) {
         </View>
 
         <TouchableOpacity style={styles.botao}
-          onPress={() => { navigation.navigate('Login') }}>
+          onPress={handleCreateUser}>
           <Text style={styles.textButton}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
