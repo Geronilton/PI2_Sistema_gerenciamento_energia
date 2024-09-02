@@ -2,8 +2,10 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import Login from './screens/register/Login'
 import Cadastro from  './screens/register/Cadastro'
+import TelaTomadas from './screens/outlet/TelaTomadas';
 
 
 const Tab = createBottomTabNavigator();
@@ -14,6 +16,7 @@ export default function App() {
       <Tab.Navigator initialRouteName='Cadastro'>
         <Tab.Screen name="Login" component={Login} />
         <Tab.Screen name="Cadastro" component={Cadastro} />
+        <Tab.Screen name="TelaTomadas" component={TelaTomadas} />
       </Tab.Navigator>
     </NavigationContainer>
   );
