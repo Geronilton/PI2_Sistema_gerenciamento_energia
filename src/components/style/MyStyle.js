@@ -35,7 +35,7 @@ export default styles = StyleSheet.create({
     },
     historico:{
         color:'#fff',
-        padding:30,
+        padding:25,
         fontWeight:'bold',
         fontSize:20,
     },
@@ -67,13 +67,18 @@ export default styles = StyleSheet.create({
         padding: 10,
         borderRadius:10,
         flexDirection: 'row',
-        width:'70%',
-        justifyContent:'space-between'
+        width:'60%',
+    },
+    tabelaid:{
+        flexDirection: 'row',
+        justifyContent:'space-between',
+        paddingRight:12,
+        paddingLeft:12,
     },
     tabdados: {
         color: '#fff',
         fontWeight:'bold',
-        fontSize:20,
-        padding:10,
+        fontSize:30,
+        padding:6,
     },
 })

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { auth, database } from '../../services/firebaseConfig';
-import { createUserWithEmailAndPassword } from '@react-native-firebase/auth';
 import { Text, View, TextInput, TouchableOpacity, Alert } from 'react-native'
 import styles from './style/style_Cad_Login';
 
