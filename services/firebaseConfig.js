@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+// meu banco de dados de teste ainda adcionarei o definitivo
 const firebaseConfig = {
   apiKey: "AIzaSyAPv5LbTNEL7Lyv2nlBTQTnmirNGP0uUdc",
   authDomain: "gerenciadorenergia-4f6e0.firebaseapp.com",
