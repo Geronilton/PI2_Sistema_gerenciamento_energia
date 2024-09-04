@@ -1,28 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import Login from './screens/register/Login';
-import Cadastro from  './screens/register/Cadastro';
-import TelaTomadas from './screens/outlet/TelaTomadas';
-import Perfil from './src/components/Perfil/Perfil';
+import LoadingScreen from './src/components/LoadingScreen';
+import Login from './src/screens/register/Login';
+import Cadastro from  './src/screens/register/Cadastro';
+import TelaTomadas from './src/screens/outlet/TelaTomadas';
+import Perfil from './src/screens/Perfil/Perfil';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './services/firebaseConfig';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function Menu() {
   return (
-    <Tab.Navigator >
-      <Tab.Screen
-        name="Perfil"
-        component={Perfil}
-      />
+    <Tab.Navigator > 
       <Tab.Screen
         name="TelaTomadas"
         component={TelaTomadas}
       />
-
+      <Tab.Screen
+        name="Perfil"
+        component={Perfil}
+      />
     </Tab.Navigator>
   );
 }
@@ -30,18 +31,38 @@ function Menu() {
 export default function App() {
 
   const [user, setUser] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return <LoadingScreen />; 
+  }
+
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Cadastro">
-
-        {!user ? (
-          <Stack.Screen
-            name="Login"
-            options={{ headerShown: false }}
-          >
-            {props => <Login {...props} setUser={setUser} />}
-          </Stack.Screen>
+      <Stack.Navigator initialRouteName="Login">
+      {!user ? (
+          <>
+            <Stack.Screen
+              name="Login"
+              component={Login} 
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Cadastro"
+              component={Cadastro}
+              options={{ headerShown: false }}
+            />
+          </>
         ) : (
           <Stack.Screen
             name="Menu"
@@ -49,13 +70,6 @@ export default function App() {
             options={{ headerShown: false }}
           />
         )}
-
-        <Stack.Screen
-          name="Cadastro"
-          component={Cadastro}
-          options={{ headerShown: false }}
-        />
-
       </Stack.Navigator>
     </NavigationContainer>
   );
