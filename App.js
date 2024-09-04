@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Login from './screens/register/Login'
-import Cadastro from './screens/register/Cadastro'
-import Perfil from './src/components/Perfil/Perfil';
+
+import Login from './screens/register/Login';
+import Cadastro from  './screens/register/Cadastro';
 import TelaTomadas from './screens/outlet/TelaTomadas';
+import Perfil from './src/components/Perfil/Perfil';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
