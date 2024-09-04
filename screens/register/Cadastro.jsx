@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { auth, database } from '../../services/firebaseConfig';
-import { createUserWithEmailAndPassword } from '@react-native-firebase/auth';
 import { Text, View, TextInput, TouchableOpacity, Alert } from 'react-native'
 import styles from './style/style_Cad_Login';
+import { auth, db } from '../../services/firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default function CadastroUser({ navigation }) {
 
@@ -12,23 +13,29 @@ export default function CadastroUser({ navigation }) {
 
   const handleCreateUser = async () => {
     try {
-      // Cria o usuário com email e senha
-      const userCredential = await auth().createUserWithEmailAndPassword(email, password);
-      const user = userCredential.user;
 
-      // Salva informações adicionais no Firestore
-      await firestore().collection('users').doc(user.uid).set({
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userId = userCredential.user.uid;
+      
+      await setDoc(doc(db, 'users',userId), {
         name: name,
         email: email,
       });
 
-      Alert.alert('Sucesso', 'Usuário criado e salvo com sucesso!');
+      setNome('');
+      setEmail('');
+      setPassword('');
+
+      Alert.alert('Sucesso', 'Usuário criado com sucesso!');
+      navigation.navigate('Login');
+      console.log('Documento criado no Firestore para o usuário:', userId);
+
     } catch (error) {
       console.error('Erro ao criar usuário:', error);
       Alert.alert('Erro', error.message);
     }
   };
-  
+
   return (
     <View style={styles.ScreenContainer}>
 
@@ -60,17 +67,17 @@ export default function CadastroUser({ navigation }) {
           placeholder='Confirme sua Senha'
         /> */}
 
-        <View style={styles.botaoSession}>
-          <TouchableOpacity
-            onPress={() => { navigation.navigate('Login') }}>
-            <Text style={{fontSize:15}}>Ja Possui uma conta? Login</Text>
-          </TouchableOpacity>
-        </View>
-
         <TouchableOpacity style={styles.botao}
           onPress={handleCreateUser}>
           <Text style={styles.textButton}>Cadastrar</Text>
         </TouchableOpacity>
+
+        <View style={styles.botaoSession}>
+          <TouchableOpacity
+            onPress={() => { navigation.navigate('Login') }}>
+            <Text style={{ fontSize: 15 }}>Ja Possui uma conta? Login</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
