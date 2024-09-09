@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#353943',
+    backgroundColor: '#F4F4F4',
 
   },
   container: {
@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
   titleCadastro: {
     fontSize: 35,
     margin: 10,
-    color: 'white'
   },
   botaoSession:{
     marginTop:60,

@@ -17,7 +17,7 @@ function Menu() {
   return (
     <Tab.Navigator > 
       <Tab.Screen
-        name="TelaTomadas"
+        name="Tomadas"
         component={TelaTomadas}
       />
       <Tab.Screen
