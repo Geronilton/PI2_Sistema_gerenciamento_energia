@@ -49,7 +49,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Cadastro">
       {!user ? (
           <>
             <Stack.Screen
@@ -69,6 +69,7 @@ export default function App() {
             component={Menu}
             options={{ headerShown: false }}
           />
+          
         )}
       </Stack.Navigator>
     </NavigationContainer>
