@@ -6,7 +6,6 @@ import Styles from "./Style/MyStyles_tomadas";
 export default function TelaTomadas( ) {
     return(
         <View style={Styles.container}>
-            <Text>TOMADAS</Text>
                 <View style={Styles.tomadaCadastrada}>
                     <View style={Styles.tomadaId}>
                     <Image

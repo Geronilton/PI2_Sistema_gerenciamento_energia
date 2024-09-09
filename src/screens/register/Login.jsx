@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, TextInput, TouchableOpacity, Alert } from 'react-native'
+import { Text, View, TextInput, TouchableOpacity,Image, Alert } from 'react-native'
 import styles from './style/style_Cad_Login'
-import Logo from '../../images/logoIcon.png'
+import Logo from '../../images/Logo.png'
 import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../services/firebaseConfig';
 
@@ -54,6 +54,12 @@ export default function LoginUser({ navigation }) {
     <View style={styles.ScreenContainer}>
       <View style={styles.container}>
 
+        <Image
+        source={Logo}
+        style={{ width: 200, height: 200 }}
+        resizeMode="contain" 
+        />
+
         <Text style={styles.titleCadastro}>Entrar</Text>
 
         <TextInput style={styles.formTextInput}
@@ -66,6 +72,7 @@ export default function LoginUser({ navigation }) {
           value={password}
           onChangeText={pass => setPassword(pass)}
           placeholder='Senha'
+          secureTextEntry={true}
         />
 
         <TouchableOpacity style={styles.botao}
