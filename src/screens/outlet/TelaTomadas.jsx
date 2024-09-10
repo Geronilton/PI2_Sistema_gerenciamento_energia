@@ -1,9 +1,9 @@
 import React from "react";
 import { TouchableOpacity, View, Text, Image, Modal, FlatList,TextInput, Pressable, StyleSheet } from "react-native";
+import { useState } from "react";
 
 import Styles from "./Style/MyStyles_tomadas";
 
-<<<<<<< HEAD:screens/outlet/TelaTomadas.jsx
 export default function TelaTomadas() {
     const TOMADA = [
 
@@ -41,13 +41,6 @@ export default function TelaTomadas() {
     const renderItem = ({item}) => (
         <View style={Styles.tomadaCadastrada}>
                 <View style={Styles.tomadaId}>
-=======
-export default function TelaTomadas( ) {
-    return(
-        <View style={Styles.container}>
-                <View style={Styles.tomadaCadastrada}>
-                    <View style={Styles.tomadaId}>
->>>>>>> 324bac7168552900abb861d16584dd8f64768ac6:src/screens/outlet/TelaTomadas.jsx
                     <Image
                         style={Styles.imagemTomada}
                         source={require('../../images/tomada.png')}
