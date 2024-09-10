@@ -3,19 +3,29 @@ import { StyleSheet } from "react-native"
 export default styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#353943',
+        backgroundColor: 'white',
         alignItems: 'center',
-        justifyContent: 'center',
+        //justifyContent: 'center',
         fontSize: 50,
+        flexDirection: 'column',
+    },
+    textoTomada: {
+        backgroundColor: 'white',
+        margin: 20,
+        padding: 5,
+        width: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 5,
     },
     tomadaCadastrada: {
-        backgroundColor:'#5f6ab0' ,
+        backgroundColor:'#0A4793' ,
         width: 350,
         padding: 'auto',
         alignItems: 'center',
         justifyContent: 'center',
         margin: 5,
-        borderRadius: 25,
+        borderRadius: 5,
         flexDirection: 'row', 
     },
     tomadaCadastradaInfo: {
@@ -40,12 +50,30 @@ export default styles = StyleSheet.create({
         justifyContent: 'center',
         margin: 10,
     },
-    butaoTomada: {
+    botaoTomada: {
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 15,
     },
-    botao: {
-        margin: 10,
+    botaoTomada1: {
+        backgroundColor: 'red',
+        margin: 5,
+        padding: 5,
+        width: 70,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    botao_Tomada: {
+        color: 'white',
+        border: 5,
+        backgroundColor: '#ACAAAD',
+        padding: 25,
+        width: 70,
+        borderRadius: 100,
+        marginTop: 50,
+        marginLeft: 300,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
