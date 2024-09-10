@@ -3,6 +3,7 @@ import { TouchableOpacity, View, Text, Image, Modal, FlatList,TextInput, Pressab
 
 import Styles from "./Style/MyStyles_tomadas";
 
+<<<<<<< HEAD:screens/outlet/TelaTomadas.jsx
 export default function TelaTomadas() {
     const TOMADA = [
 
@@ -40,9 +41,16 @@ export default function TelaTomadas() {
     const renderItem = ({item}) => (
         <View style={Styles.tomadaCadastrada}>
                 <View style={Styles.tomadaId}>
+=======
+export default function TelaTomadas( ) {
+    return(
+        <View style={Styles.container}>
+                <View style={Styles.tomadaCadastrada}>
+                    <View style={Styles.tomadaId}>
+>>>>>>> 324bac7168552900abb861d16584dd8f64768ac6:src/screens/outlet/TelaTomadas.jsx
                     <Image
                         style={Styles.imagemTomada}
-                        source={require('../../assets/images/tomada.png')}
+                        source={require('../../images/tomada.png')}
                     />
                     <Text>{item.id}</Text>
                 </View>

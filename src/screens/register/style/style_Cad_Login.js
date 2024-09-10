@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#353943',
+    backgroundColor: '#F4F4F4',
 
   },
   container: {
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     alignItems:'center',
     width: 150,
     backgroundColor:'#3b93aa',
-    borderRadius:10,
+    borderRadius:5,
   },
   textButton:{
     fontSize: 18,
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   formTextInput: {
     borderWidth: 0.5,
-    borderRadius: 10,
+    borderRadius: 5,
     borderColor: 'black',
     backgroundColor:'#C3C4C9',
     color: 'black',
@@ -53,11 +53,10 @@ const styles = StyleSheet.create({
   titleCadastro: {
     fontSize: 35,
     margin: 10,
-    color: 'white'
   },
   botaoSession:{
-    marginLeft:70,
-    marginBottom:20,
+    marginTop:60,
+    width:320,
   }
 });
 
