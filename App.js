@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoadingScreen from './src/components/LoadingScreen';
 import Login from './src/screens/register/Login';
 import Cadastro from  './src/screens/register/Cadastro';
+import TelaHome from './src/screens/Home/TelaHome'
 import TelaTomadas from './src/screens/outlet/TelaTomadas';
 import Perfil from './src/screens/Perfil/Perfil';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -23,6 +24,10 @@ function Menu() {
       <Tab.Screen
         name="Perfil"
         component={Perfil}
+      />
+      <Tab.Screen
+        name="Home"
+        component={TelaHome}
       />
     </Tab.Navigator>
   );
