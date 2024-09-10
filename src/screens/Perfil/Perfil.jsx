@@ -1,78 +1,53 @@
-import { Text, View, FlatList, Button, Image } from 'react-native';
+import { Text, View, Image, Dimensions } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import styles from './style/MyStyle';
 import { db } from '../../../services/firebaseConfig';
-import { collection, getDocs, doc, getDoc } from "firebase/firestore"; // Importar funções específicas do Firestore
+import { doc, getDoc } from "firebase/firestore";
 import { PieChart } from "react-native-chart-kit";
-import { Dimensions } from "react-native";
 import { getAuth } from 'firebase/auth';
 
 const screenWidth = Dimensions.get("window").width;
+
 const data = [
     {
-      name: "Seoul",
-      population: 21500000,
-      color: "rgba(131, 167, 234, 1)",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
+        name: "Seoul",
+        population: 21500000,
+        color: "rgba(131, 167, 234, 1)",
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 15
     },
     {
-      name: "Toronto",
-      population: 2800000,
-      color: "#F00",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
+        name: "Toronto",
+        population: 2800000,
+        color: "#F00",
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 15
     },
     {
-      name: "Beijing",
-      population: 527612,
-      color: "red",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
+        name: "Beijing",
+        population: 527612,
+        color: "red",
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 15
     },
     {
-      name: "New York",
-      population: 8538000,
-      color: "#ffffff",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
+        name: "New York",
+        population: 8538000,
+        color: "#ffffff",
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 15
     },
     {
-      name: "Moscow",
-      population: 11920000,
-      color: "rgb(0, 0, 255)",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
+        name: "Moscow",
+        population: 11920000,
+        color: "rgb(0, 0, 255)",
+        legendFontColor: "#7F7F7F",
+        legendFontSize: 15
     }
-  ];
-  
-const DATA = [
-    {
-        id: 1,
-        nome: 400.0,
-    },
-    {
-        id: 2,
-        nome: 200.0,
-    },
-    {
-        id: 3,
-        nome: 500.0,
-    },
 ];
 
-const Item = ({ id, nome }) => {
-    return (
-        <View style={styles.tabelaid}>
-            <Text style={styles.tabdados}>{id}</Text>
-            <Text style={styles.tabdados}>{nome}</Text>
-        </View>
-    );
-};
-
 export default function Perfil() {
-    const [dados, setDados] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [dados, setDados] = useState({});
     const auth = getAuth();
     const user = auth.currentUser;
     const userId = user ? user.uid : null;
@@ -84,11 +59,12 @@ export default function Perfil() {
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-                    setDados(docSnap.data());};
+                    setDados(docSnap.data());
+                }
             }
-        }
+        };
         fetchData();
-        }, [userId]);
+    }, [userId]);
 
     return (
         <View style={styles.container}>
@@ -97,23 +73,13 @@ export default function Perfil() {
                     <Image style={styles.image} source={require('../../images/ClaraOswald.jpg')} />
                 </View>
 
-                {dados.map((usuario, index) => {
-                    return(
-                    <View style={styles.nome} key={index}>
-                        <Text style={styles.titlename}>{usuario.name}</Text>
-                    </View>     
-                    )
-                })}
+                <View style={styles.nome}>
+                    <Text style={styles.titlename}>{dados.name}</Text>
+                </View>
             </View>
             <View style={styles.info}>
                 <Text style={styles.dados}>Email:</Text>
-                {dados.map((usuario, index) => {
-                    return(
-                        <View  key={index}>
-                            <Text style={styles.text}>{usuario.email}</Text>
-                        </View>
-                    )
-                })}
+                <Text style={styles.text}>{dados.email}</Text>
             </View>
 
             <View>
@@ -121,21 +87,22 @@ export default function Perfil() {
             </View>
             <Text style={styles.historico}>Data</Text>
             <View style={styles.tabela}>
-            <PieChart data={data}
-                width={screenWidth}
-                height={220}
-                chartConfig={chartConfig}
-                accessor={"population"}
-                backgroundColor={"transparent"}
-                paddingLeft={"15"}
-                center={[10, 50]}
-                absolute
-            />
-            
+                <PieChart
+                    data={data}
+                    width={screenWidth}
+                    height={220}
+                    chartConfig={chartConfig}
+                    accessor={"population"}
+                    backgroundColor={"transparent"}
+                    paddingLeft={"15"}
+                    center={[10, 50]}
+                    absolute
+                />
             </View>
         </View>
     );
 }
+
 const chartConfig = {
     backgroundGradientFrom: "#1E2923",
     backgroundGradientFromOpacity: 0,
@@ -145,4 +112,4 @@ const chartConfig = {
     strokeWidth: 2, // optional, default 3
     barPercentage: 0.5,
     useShadowColorFromDataset: false // optional
-  };
+};
