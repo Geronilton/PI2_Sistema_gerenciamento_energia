@@ -2,9 +2,10 @@ import { Text, View, FlatList, Button, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import styles from './style/MyStyle';
 import { db } from '../../../services/firebaseConfig';
-import { ref, onValue } from "firebase/database";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore"; // Importar funções específicas do Firestore
 import { PieChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
+import { getAuth } from 'firebase/auth';
 
 const screenWidth = Dimensions.get("window").width;
 const data = [
@@ -71,20 +72,23 @@ const Item = ({ id, nome }) => {
 
 export default function Perfil() {
     const [dados, setDados] = useState([]);
-
+    const [loading, setLoading] = useState(true);
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const userId = user ? user.uid : null;
+    
     useEffect(() => {
-        const usuariosRef = ref(db, 'Usuario');
-        const unsubscribe = onValue(usuariosRef, (snapshot) => {
-            const data = [];
-            snapshot.forEach((childSnapshot) => {
-                data.push(childSnapshot.val());
-            });
-            setDados(data);
-        });
+        const fetchData = async () => {
+            if (userId) {
+                const docRef = doc(db, 'users', userId);
+                const docSnap = await getDoc(docRef);
 
-        // Cleanup function
-        return () => unsubscribe();
-    }, []);
+                if (docSnap.exists()) {
+                    setDados(docSnap.data());};
+            }
+        }
+        fetchData();
+        }, [userId]);
 
     return (
         <View style={styles.container}>
@@ -96,7 +100,7 @@ export default function Perfil() {
                 {dados.map((usuario, index) => {
                     return(
                     <View style={styles.nome} key={index}>
-                        <Text style={styles.titlename}>{usuario.nome}</Text>
+                        <Text style={styles.titlename}>{usuario.name}</Text>
                     </View>     
                     )
                 })}
@@ -128,11 +132,6 @@ export default function Perfil() {
                 absolute
             />
             
-                <FlatList
-                    data={DATA}
-                    renderItem={({ item }) => <Item nome={item.nome} id={item.id}/>}
-                    keyExtractor={item => item.id.toString()}
-                />
             </View>
         </View>
     );
