@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoadingScreen from './src/components/LoadingScreen';
 import Login from './src/screens/register/Login';
-import Cadastro from  './src/screens/register/Cadastro';
+import Cadastro from './src/screens/register/Cadastro';
 import TelaHome from './src/screens/Home/TelaHome'
 import TelaTomadas from './src/screens/outlet/TelaTomadas';
 import Perfil from './src/screens/Perfil/Perfil';
@@ -16,7 +16,11 @@ const Stack = createNativeStackNavigator();
 
 function Menu() {
   return (
-    <Tab.Navigator > 
+    <Tab.Navigator >
+      <Tab.Screen
+        name="Home"
+        component={TelaHome}
+      />
       <Tab.Screen
         name="Tomadas"
         component={TelaTomadas}
@@ -25,10 +29,7 @@ function Menu() {
         name="Perfil"
         component={Perfil}
       />
-      <Tab.Screen
-        name="Home"
-        component={TelaHome}
-      />
+
     </Tab.Navigator>
   );
 }
@@ -48,18 +49,18 @@ export default function App() {
   }, []);
 
   if (loading) {
-    return <LoadingScreen />; 
+    return <LoadingScreen />;
   }
 
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Cadastro">
-      {!user ? (
+      <Stack.Navigator initialRouteName="Login">
+        {!user ? (
           <>
             <Stack.Screen
               name="Login"
-              component={Login} 
+              component={Login}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -74,7 +75,7 @@ export default function App() {
             component={Menu}
             options={{ headerShown: false }}
           />
-          
+
         )}
       </Stack.Navigator>
     </NavigationContainer>
