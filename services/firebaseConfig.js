@@ -3,17 +3,6 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database"; 
 
-// meu banco de dados de teste ainda adcionarei o definitivo
-// const firebaseConfig = {
-//   apiKey: "AIzaSyAPv5LbTNEL7Lyv2nlBTQTnmirNGP0uUdc",
-//   authDomain: "gerenciadorenergia-4f6e0.firebaseapp.com",
-//   projectId: "gerenciadorenergia-4f6e0",
-//   storageBucket: "gerenciadorenergia-4f6e0.appspot.com",
-//   messagingSenderId: "1089118535787",
-//   appId: "1:1089118535787:web:befccdd55a3fff29ff312e",
-//   measurementId: "G-SV34VCFR8B",
-// };
-
 const firebaseConfig = {
   apiKey: "AIzaSyCDRlwRoWSYbNlFt9gR4DmPYKrTr1VBaAo",
   authDomain: "sgenergia-residencial.firebaseapp.com",
