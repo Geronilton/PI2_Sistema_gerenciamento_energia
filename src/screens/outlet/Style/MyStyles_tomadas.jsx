@@ -34,7 +34,7 @@ export default styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         margin: 10,
-        borderRadius: 20,
+        borderRadius: 5,
     },
     containerInfoTomada: {
         alignItems: 'center',
