@@ -3,10 +3,9 @@ import { StyleSheet } from "react-native";
 export default styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#353943',
+      backgroundColor: '#F4F4F4',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      
     },
     info:{
         flexDirection: 'row',
@@ -32,35 +31,33 @@ export default styles = StyleSheet.create({
         borderRadius: 20,
         padding: 10,
         right:25,
+        shadowRadius:10,
     },
     historico:{
-        color:'#fff',
+        color:'black',
         padding:25,
         fontWeight:'bold',
         fontSize:20,
     },
     dados: {
-        color: '#fff',
+        color: '#black',
         fontWeight:'bold',
         fontSize:20,
         justifyContent:'center',
     },
     titlename: {
-        color: '#fff',
-        fontSize:30,
+        color: '#black',
+        fontSize:25,
     },
     text: {
-        color: '#fff',
+        color: '#black',
         fontSize:20,
         
     },
     image:{
-        width:40,
-        height:40,
-        padding:50,
-        borderColor: '#fff',
-        borderRadius: 90,
-        borderWidth: 5,
+        width:100,
+        height:100,
+        padding:90,
     },
     tabela:{
         backgroundColor:'#c8c8c8',
@@ -68,6 +65,7 @@ export default styles = StyleSheet.create({
         borderRadius:10,
         flexDirection: 'row',
         width:'60%',
+        shadowRadius:2,
     },
     tabelaid:{
         flexDirection: 'row',
@@ -78,7 +76,15 @@ export default styles = StyleSheet.create({
     tabdados: {
         color: '#fff',
         fontWeight:'bold',
-        fontSize:30,
+        fontSize:20,
         padding:6,
     },
+    botaoSession:{
+        backgroundColor: '#5f6ab0',
+        borderRadius: 5,
+        left:'40%',
+        padding:6,
+        top: 8,
+        shadowRadius:2,
+    }
 })
