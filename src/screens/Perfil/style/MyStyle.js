@@ -63,7 +63,7 @@ export default styles = StyleSheet.create({
         backgroundColor:'#c8c8c8',
         padding: 10,
         borderRadius:10,
-        flexDirection: 'row',
+        flexDirection: 'column',
         width:'60%',
         shadowRadius:2,
     },

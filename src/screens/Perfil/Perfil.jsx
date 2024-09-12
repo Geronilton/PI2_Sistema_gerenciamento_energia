@@ -1,72 +1,80 @@
 import { Text, View, Image, Pressable, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import styles from './style/MyStyle';
-import { db, realtimeDb } from '../../../services/firebaseConfig'; // Ajuste a importação
-import { doc, getDoc } from 'firebase/firestore';
 import { getAuth, signOut } from 'firebase/auth';
-import { ref, onValue } from 'firebase/database';
+import { getDatabase, ref, get, onValue } from 'firebase/database'; // Certifique-se de importar corretamente
 
-const DATA = [
-    {
-        id: '1',
-        nome: '400.0',
-    },
-];
-
-const Item = ({ nome, id }) => {
-    return (
-        <View style={styles.tabelaid}>
-            <Text style={styles.tabdados}>{id}</Text>
-            <Text style={styles.tabdados}>{nome}</Text>
-        </View>
-    );
-}
-
-export default function Perfil() {
+export default function Perfil({ navigation }) {
     const [dados, setDados] = useState({});
     const [historico, setHistorico] = useState([]);
     const auth = getAuth();
     const user = auth.currentUser;
     const userId = user ? user.uid : null;
-    
-    useEffect(() => {
-        const fetchData = async () => {
-            if (userId) {
-                const docRef = doc(db, 'users', userId);
-                const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    setDados(docSnap.data());
+    // Fetch user data from Realtime Database
+    useEffect(() => {
+        if (user) {
+            setDados(prevState => ({
+                ...prevState,
+                email: user.email // Email do Firebase Auth
+            }));
+        }
+    }, [user]);
+
+    // Fetch nome from Realtime Database
+    useEffect(() => {
+        if (userId) {
+            const db = getDatabase();
+            const userRef = ref(db, `Usuarios/${userId}/nome`); // Ajuste conforme a estrutura do banco de dados
+            get(userRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    setDados(prevState => ({
+                        ...prevState,
+                        nome: snapshot.val() // Nome do Realtime Database
+                    }));
+                } else {
+                    console.log('No data available');
                 }
-            }
-        };
-
-        fetchData();
+            }).catch((error) => {
+                console.error('Error fetching name: ', error);
+            });
+        }
     }, [userId]);
+        
 
+    // Fetch current consumption history from Realtime Database
     useEffect(() => {
-        const dbRef = ref(realtimeDb, 'sensores');
+        const db = getDatabase();
+        const dbRef = ref(db, 'sensores/corrente'); // Referência ao caminho dos sensores
         const unsubscribe = onValue(dbRef, (snapshot) => {
             const newData = [];
             snapshot.forEach((childSnapshot) => {
-                newData.push(childSnapshot.val());
+                newData.push(childSnapshot.val()); // Pega o valor de cada item
             });
             setHistorico(newData); // Atualiza o estado com os dados recebidos
         });
 
-        // Clean up the listener when the component unmounts
+        // Limpar o listener quando o componente for desmontado
         return () => unsubscribe();
     }, []);
 
+    // Função de logout
     function logout() {
         signOut(auth)
             .then(() => {
-                // Redireciona para a página inicial ou para onde você desejar
-                // Ajuste conforme a sua configuração de roteamento
-                router.replace('/');
+                // Redireciona para a página de login ou inicial
+                navigation.replace('Login'); // Ajuste conforme o roteamento que você está utilizando
+            })
+            .catch((error) => {
+                console.error('Error during sign out: ', error);
             });
     }
 
+    const renderItem = ({ item }) => (
+        <View style={styles.tabelaid}>
+            <Text style={styles.tabdados}>{item}</Text> {/* Ajuste conforme a estrutura dos dados */}
+        </View>
+    );
     return (
         <View style={styles.container}>
             <View style={styles.botaoSession}>
@@ -77,7 +85,7 @@ export default function Perfil() {
             <View style={styles.perfil}>
                 <Image style={styles.image} source={require('../../images/Logo.png')} />
                 <View style={styles.nome}>
-                    <Text style={styles.titlename}>{dados.name}</Text>
+                    <Text style={styles.titlename}>{dados.nome}</Text>
                 </View>
             </View>
             <View style={styles.info}>
@@ -89,17 +97,15 @@ export default function Perfil() {
                 <Text style={styles.historico}>Histórico de Consumo</Text>
             </View>
 
-            <View style={styles.tabela}>
-                {historico.length > 0 ? (
-                    historico.map((item, index) => (
-                        <View style={styles.tabelaid} key={index}>
-                            <Text style={styles.tabdados}>{item.corrente}</Text> 
-                        </View>
-                    ))
-                ) : (
-                    <Text>No data available</Text>
-                )}
-            </View>
+            
+                <FlatList
+                data={historico}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => index.toString()}
+                ListEmptyComponent={<Text>No data available</Text>}
+                contentContainerStyle={styles.tabela} // Estilo aplicado ao container da FlatList
+            />
+        
         </View>
     );
 }
