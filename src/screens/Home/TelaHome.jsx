@@ -45,7 +45,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const resultado = await pegarUltimoDadoDoFirebase("sensores/corrente");  // Passa o caminho do dado
+      const resultado = await pegarUltimoDadoDoFirebase("sensores/correnteG");  // Passa o caminho do dado
       setUltimoDado(resultado);  // Atualiza o estado com o dado recebido
       console.log(resultado);
     };
