@@ -40,23 +40,54 @@ export default function Perfil({ navigation }) {
             });
         }
     }, [userId]);
-        
 
-    // Fetch current consumption history from Realtime Database
     useEffect(() => {
-        const db = getDatabase();
-        const dbRef = ref(db, 'sensores/corrente'); // Referência ao caminho dos sensores
-        const unsubscribe = onValue(dbRef, (snapshot) => {
-            const newData = [];
-            snapshot.forEach((childSnapshot) => {
-                newData.push(childSnapshot.val()); // Pega o valor de cada item
+        if (userId) {
+            const db = getDatabase();
+            const dbRef = ref(db, 'sensores/corrente');
+            const unsubscribe = onValue(dbRef, (snapshot) => {
+                const data = [];
+                snapshot.forEach((childSnapshot) => {
+                    const item = childSnapshot.val();
+                    const timestamp = new Date(item.timestamp); // Ajuste conforme o formato de timestamp
+                    data.push({
+                        id: childSnapshot.key,
+                        corrente: item.corrente,
+                        timestamp,
+                    });
+                });
+                const organizedData = organizeDataByMonth(data);
+                setHistorico(organizedData);
             });
-            setHistorico(newData); // Atualiza o estado com os dados recebidos
-        });
 
-        // Limpar o listener quando o componente for desmontado
-        return () => unsubscribe();
-    }, []);
+            return () => unsubscribe();
+        }
+    }, [userId]);
+
+    // Function to organize data by month
+    const organizeDataByMonth = (data) => {
+        const months = Array.from({ length: 12 }, (_, i) => i + 1); // Meses de 1 a 12
+        const result = months.map(month => {
+            const monthlyData = data.filter(item => {
+                const date = item.timestamp;
+                return date.getMonth() + 1 === month;
+            });
+            const totalCorrente = monthlyData.reduce((sum, item) => sum + item.corrente, 0);
+            return { mes: month, corrente: totalCorrente };
+        });
+        return result;
+    };
+
+    // Render each item of the month
+    const renderItem = ({ item }) => (
+        <View>
+            <View style={styles.tabelaid}>
+                <Text style={styles.tabdados}>{`Mês ${item.mes} :`}</Text>
+                <Text style={styles.tabdados}>{item.corrente.toFixed(2) || '-'}</Text>
+            </View>
+        </View>
+    );
+    
 
     // Função de logout
     function logout() {
@@ -70,11 +101,6 @@ export default function Perfil({ navigation }) {
             });
     }
 
-    const renderItem = ({ item }) => (
-        <View style={styles.tabelaid}>
-            <Text style={styles.tabdados}>{item}</Text> {/* Ajuste conforme a estrutura dos dados */}
-        </View>
-    );
     return (
         <View style={styles.container}>
             <View style={styles.botaoSession}>
@@ -97,13 +123,12 @@ export default function Perfil({ navigation }) {
                 <Text style={styles.historico}>Histórico de Consumo</Text>
             </View>
 
-            
-                <FlatList
+            <FlatList
                 data={historico}
                 renderItem={renderItem}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item) => item.mes.toString()}
                 ListEmptyComponent={<Text>No data available</Text>}
-                contentContainerStyle={styles.tabela} // Estilo aplicado ao container da FlatList
+                contentContainerStyle={styles.tabela}
             />
         
         </View>

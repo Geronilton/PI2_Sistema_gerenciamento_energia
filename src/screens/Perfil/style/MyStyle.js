@@ -61,10 +61,11 @@ export default styles = StyleSheet.create({
     },
     tabela:{
         backgroundColor:'#c8c8c8',
-        padding: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
         borderRadius:10,
         flexDirection: 'column',
-        width:'60%',
+        width:'100%',
         shadowRadius:2,
     },
     tabelaid:{
@@ -72,6 +73,8 @@ export default styles = StyleSheet.create({
         justifyContent:'space-between',
         paddingRight:12,
         paddingLeft:12,
+        flex:1,
+        width:'100%'
     },
     tabdados: {
         color: '#fff',
