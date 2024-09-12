@@ -1,10 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { ref, set, get } from 'firebase/database';
-import {realtimeDb } from "../../../services/firebaseConfig";
-import { getDatabase } from "firebase/database"; 
-import UltimoDadoDoFirebase from './pegar';
+import { ref, get, query, orderByKey, limitToLast } from 'firebase/database';
+import { realtimeDb } from '../../../services/firebaseConfig';
+
 import {
   LineChart,
   BarChart,
@@ -18,14 +17,51 @@ import { Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width;
 
 export default function Home() {
+
+  const [ultimoDado, setUltimoDado] = useState(null);
+
+  // Função para pegar o último dado do Realtime Database
+  const pegarUltimoDadoDoFirebase = async (caminho) => {
+    try {
+      // Cria a query para ordenar por chave e limitar a 1 resultado
+      const dadoRef = query(ref(realtimeDb, caminho), orderByKey(), limitToLast(1));
+      
+      // Executa a consulta e pega o snapshot dos dados
+      const snapshot = await get(dadoRef);
+      const dados = snapshot.val();  // Pega os dados do snapshot
+  
+      if (dados) {
+        const ultimoDado = Object.values(dados)[0];  // Pega o primeiro (e único) valor da lista de dados
+        console.log("Último dado:", ultimoDado);
+        return ultimoDado;
+      }
+  
+      return null;  // Retorna null se não houver dados
+    } catch (error) {
+      console.error("Erro ao buscar o último dado do Firebase: ", error);
+      return null;  // Retorna null em caso de erro
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const resultado = await pegarUltimoDadoDoFirebase("sensores/corrente");  // Passa o caminho do dado
+      setUltimoDado(resultado);  // Atualiza o estado com o dado recebido
+      console.log(resultado);
+    };
+
+    fetchData();  // Chama a função para buscar os dados
+  }, []);
   
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <div className="Home">
-          <UltimoDadoDoFirebase />
-        </div>
+          <Text className="Home">
+            
+          </Text>
         <Text style={styles.Text_box}>R$: 9.999,99</Text>
+          <Text style={styles.Text_box}>{ultimoDado}</Text>
+
       </View>
       
       
@@ -37,13 +73,9 @@ export default function Home() {
       datasets: [
         {
           data: [
-            Math.random() * 100,
-            Math.random() * 100,
-            Math.random() * 100,
-            Math.random() * 100,
-            Math.random() * 100,
-            Math.random() * 100,
-            70
+            
+            ultimoDado
+          
           ]
         }
       ]
@@ -118,9 +150,9 @@ export default function Home() {
           width={300}
           height={170}
           chartConfig = {{
-            backgroundGradientFrom: "#1E2923",
+            backgroundGradientFrom: "transparent",
             backgroundGradientFromOpacity: 0,
-            backgroundGradientTo: "#08130D",
+            backgroundGradientTo: "transparent",
             backgroundGradientToOpacity: 0.5,
             color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
             strokeWidth: 2, // optional, default 3
