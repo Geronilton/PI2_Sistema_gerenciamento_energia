@@ -1,5 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ref, set, get } from 'firebase/database';
+import {realtimeDb } from "../../../services/firebaseConfig";
+import { getDatabase } from "firebase/database"; 
+import UltimoDadoDoFirebase from './pegar';
 import {
   LineChart,
   BarChart,
@@ -13,11 +18,13 @@ import { Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width;
 
 export default function Home() {
+  
   return (
     <View style={styles.container}>
-      <Text style={styles.Text}>MONITORAMENTO</Text>
       <View style={styles.box}>
-        <Text style={styles.Text_box}>CONSUMO:</Text>
+        <div className="Home">
+          <UltimoDadoDoFirebase />
+        </div>
         <Text style={styles.Text_box}>R$: 9.999,99</Text>
       </View>
       
@@ -124,7 +131,7 @@ export default function Home() {
             alignItems: 'center',
             marginVertical: 15,
             color: 'white',
-            fontSize: '50px'
+            fontSize: 50
           }}
         />
       </View>
@@ -139,10 +146,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   Text: {
-    fontSize: '20px',
+    fontSize: 20,
   },
   Text_box: {
-    fontSize: '30px',
+    fontSize: 20,
     textAlign: 'center'
   },
   box:{

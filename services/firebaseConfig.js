@@ -17,5 +17,23 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const realtimeDb = getDatabase(app);
+ 
+// Função para pegar o último dado do Realtime Database
+ const pegarUltimoDadoDoFirebase = async (realtimeDb) => {
+  try {
+    const dadoRef = getDatabase.ref(realtimeDb).orderByKey().limitToLast(1);  // Ordena por chave e limita a 1 resultado
+    const snapshot = await dadoRef.once("value");  // Pega o dado uma vez
+    const dados = snapshot.val();  // Pega os dados do snapshot
+    
+    if (dados) {
+      const ultimoDado = Object.values(dados)[0];  // Pega o primeiro (e único) valor da lista de dados
+      return ultimoDado;
+    }
+    return null;
+  } catch (error) {
+    console.error("Erro ao buscar o último dado do Firebase: ", error);
+    return null;  // Retorna null em caso de erro
+  }
+};
 
-export {auth, db, realtimeDb}
+export {auth, db, realtimeDb, pegarUltimoDadoDoFirebase}
