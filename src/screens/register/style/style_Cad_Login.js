@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     margin: 5,
     alignItems:'center',
     width: 150,
-    backgroundColor:'#3b93aa',
+    backgroundColor:'#6069B1',
     borderRadius:5,
   },
   textButton:{

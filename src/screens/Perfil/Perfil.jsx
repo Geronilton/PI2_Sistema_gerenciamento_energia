@@ -1,149 +1,136 @@
-import { Text, View, FlatList, Button, Image } from 'react-native';
+import { Text, View, Image, Pressable, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import styles from './style/MyStyle';
-import { db } from '../../../services/firebaseConfig';
-import { ref, onValue } from "firebase/database";
-import { PieChart } from "react-native-chart-kit";
-import { Dimensions } from "react-native";
+import { getAuth, signOut } from 'firebase/auth';
+import { getDatabase, ref, get, onValue } from 'firebase/database'; // Certifique-se de importar corretamente
 
-const screenWidth = Dimensions.get("window").width;
-const data = [
-    {
-      name: "Seoul",
-      population: 21500000,
-      color: "rgba(131, 167, 234, 1)",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Toronto",
-      population: 2800000,
-      color: "#F00",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Beijing",
-      population: 527612,
-      color: "red",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "New York",
-      population: 8538000,
-      color: "#ffffff",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    },
-    {
-      name: "Moscow",
-      population: 11920000,
-      color: "rgb(0, 0, 255)",
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 15
-    }
-  ];
-  
-const DATA = [
-    {
-        id: 1,
-        nome: 400.0,
-    },
-    {
-        id: 2,
-        nome: 200.0,
-    },
-    {
-        id: 3,
-        nome: 500.0,
-    },
-];
+export default function Perfil({ navigation }) {
+    const [dados, setDados] = useState({});
+    const [historico, setHistorico] = useState([]);
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const userId = user ? user.uid : null;
 
-const Item = ({ id, nome }) => {
-    return (
-        <View style={styles.tabelaid}>
-            <Text style={styles.tabdados}>{id}</Text>
-            <Text style={styles.tabdados}>{nome}</Text>
-        </View>
-    );
-};
+    // Fetch user data from Realtime Database
+    useEffect(() => {
+        if (user) {
+            setDados(prevState => ({
+                ...prevState,
+                email: user.email // Email do Firebase Auth
+            }));
+        }
+    }, [user]);
 
-export default function Perfil() {
-    const [dados, setDados] = useState([]);
+    // Fetch nome from Realtime Database
+    useEffect(() => {
+        if (userId) {
+            const db = getDatabase();
+            const userRef = ref(db, `Usuarios/${userId}/nome`); // Ajuste conforme a estrutura do banco de dados
+            get(userRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    setDados(prevState => ({
+                        ...prevState,
+                        nome: snapshot.val() // Nome do Realtime Database
+                    }));
+                } else {
+                    console.log('No data available');
+                }
+            }).catch((error) => {
+                console.error('Error fetching name: ', error);
+            });
+        }
+    }, [userId]);
 
     useEffect(() => {
-        const usuariosRef = ref(db, 'Usuario');
-        const unsubscribe = onValue(usuariosRef, (snapshot) => {
-            const data = [];
-            snapshot.forEach((childSnapshot) => {
-                data.push(childSnapshot.val());
+        if (userId) {
+            const db = getDatabase();
+            const dbRef = ref(db, 'sensores/corrente');
+            const unsubscribe = onValue(dbRef, (snapshot) => {
+                const data = [];
+                snapshot.forEach((childSnapshot) => {
+                    const item = childSnapshot.val();
+                    const timestamp = new Date(item.timestamp); // Ajuste conforme o formato de timestamp
+                    data.push({
+                        id: childSnapshot.key,
+                        corrente: item.corrente,
+                        timestamp,
+                    });
+                });
+                const organizedData = organizeDataByMonth(data);
+                setHistorico(organizedData);
             });
-            setDados(data);
-        });
 
-        // Cleanup function
-        return () => unsubscribe();
-    }, []);
+            return () => unsubscribe();
+        }
+    }, [userId]);
+
+    // Function to organize data by month
+    const organizeDataByMonth = (data) => {
+        const months = Array.from({ length: 12 }, (_, i) => i + 1); // Meses de 1 a 12
+        const result = months.map(month => {
+            const monthlyData = data.filter(item => {
+                const date = item.timestamp;
+                return date.getMonth() + 1 === month;
+            });
+            const totalCorrente = monthlyData.reduce((sum, item) => sum + item.corrente, 0);
+            return { mes: month, corrente: totalCorrente };
+        });
+        return result;
+    };
+
+    // Render each item of the month
+    const renderItem = ({ item }) => (
+        <View>
+            <View style={styles.tabelaid}>
+                <Text style={styles.tabdados}>{`Mês ${item.mes} :`}</Text>
+                <Text style={styles.tabdados}>{item.corrente.toFixed(2) || '-'}</Text>
+            </View>
+        </View>
+    );
+    
+
+    // Função de logout
+    function logout() {
+        signOut(auth)
+            .then(() => {
+                // Redireciona para a página de login ou inicial
+                navigation.replace('Login'); // Ajuste conforme o roteamento que você está utilizando
+            })
+            .catch((error) => {
+                console.error('Error during sign out: ', error);
+            });
+    }
 
     return (
         <View style={styles.container}>
+            <View style={styles.botaoSession}>
+                <Pressable onPress={logout}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold' }}>Sair</Text>
+                </Pressable>
+            </View>
             <View style={styles.perfil}>
-                <View style={styles.logo}>
-                    <Image style={styles.image} source={require('../../images/ClaraOswald.jpg')} />
+                <Image style={styles.image} source={require('../../images/Logo.png')} />
+                <View style={styles.nome}>
+                    <Text style={styles.titlename}>{dados.nome}</Text>
                 </View>
-
-                {dados.map((usuario, index) => {
-                    return(
-                    <View style={styles.nome} key={index}>
-                        <Text style={styles.titlename}>{usuario.nome}</Text>
-                    </View>     
-                    )
-                })}
             </View>
             <View style={styles.info}>
                 <Text style={styles.dados}>Email:</Text>
-                {dados.map((usuario, index) => {
-                    return(
-                        <View  key={index}>
-                            <Text style={styles.text}>{usuario.email}</Text>
-                        </View>
-                    )
-                })}
+                <Text style={styles.text}>{dados.email}</Text>
             </View>
 
             <View>
                 <Text style={styles.historico}>Histórico de Consumo</Text>
             </View>
-            <Text style={styles.historico}>Data</Text>
-            <View style={styles.tabela}>
-            <PieChart data={data}
-                width={screenWidth}
-                height={220}
-                chartConfig={chartConfig}
-                accessor={"population"}
-                backgroundColor={"transparent"}
-                paddingLeft={"15"}
-                center={[10, 50]}
-                absolute
+
+            <FlatList
+                data={historico}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.mes.toString()}
+                ListEmptyComponent={<Text>No data available</Text>}
+                contentContainerStyle={styles.tabela}
             />
-            
-                <FlatList
-                    data={DATA}
-                    renderItem={({ item }) => <Item nome={item.nome} id={item.id}/>}
-                    keyExtractor={item => item.id.toString()}
-                />
-            </View>
+        
         </View>
     );
 }
-const chartConfig = {
-    backgroundGradientFrom: "#1E2923",
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: "#08130D",
-    backgroundGradientToOpacity: 0.5,
-    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
-    barPercentage: 0.5,
-    useShadowColorFromDataset: false // optional
-  };
