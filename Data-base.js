@@ -2,6 +2,9 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 
+//adicionei para se conectar ao farebase e pegar as informações que a tela de cadastro de tomadas necessitam
+import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,3 +22,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+//adicionei para se conectar ao farebase e pegar as informações que a tela de cadastro de tomadas necessitam
+const db = getFirestore( app );
