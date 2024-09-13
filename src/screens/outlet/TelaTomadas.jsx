@@ -45,7 +45,12 @@ export default function TelaTomadas() {
         }
     };
 
-    const cadastrarTomada = () => {
+     
+    const cadastrarTomada = async () => {
+        if (!equipamento.trim()) {
+            alert('por favor, insira o nome do equipamento.');
+            return;
+        }
         const novaTomada = {
             id: contador.toString(),
             equipamento: equipamento,
@@ -53,19 +58,40 @@ export default function TelaTomadas() {
             kwh: '0.5',
             estado: false,
         };
-        setTomada([...tomada, novaTomada]);
-        setContador(contador + 1);
-        setModalVisible(false);
+
+        try {
+            const docRef = await addDoc(collection(db, 'tomadas'), novaTomada);
+            console.log("Tomada cadastrada com sucesso com ID: ", docRef.id);
+
+            setTomada([...tomada, novaTomada]);
+            setContador(contador + 1);
+            setModalVisible(false);
+            setEquipamento('');
+        } catch (e) {
+            console.error("Erro ao adicionar a tomada", e);
+        }
     };
 
-    const excluirTela = (id) => {
-        setTomada(tomada.filter(item => item.id !== id));
+    const excluirTela = async (id) => {
+        try {
+            await deleteDoc(doc(db, "tomada", id));
+            setTomada(tomada.filter(item => item.id !==id));
+        } catch (e) {
+            console.error("Erro ao excluir sua tomada ID: ", e);
+        }
     };
 
-    const botaoONOFF = (id) => {
-        setTomada(tomada.map(item =>
-            item.id === id ? { ...item, estado: !item.estado } : item
-        ));
+    const botaoONOFF = async (id) => {
+        try {
+            await updateDoc(doc(db, "tomadas", id), {
+                estado: novoEstado,
+            });
+            setTomada(tomada.map(item => 
+                item.id === id ? { ...item, estado: !item.estado} : item
+            ));
+        } catch (e) {
+            console.error("Erro ao atualizar a tomada", e);
+        }
     };
 
     const renderItem = ({ item }) => (

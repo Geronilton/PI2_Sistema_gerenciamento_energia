@@ -56,11 +56,8 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-          <Text className="Home">
-            
-          </Text>
         <Text style={styles.Text_box}>R$: 9.999,99</Text>
-          <Text style={styles.Text_box}>{ultimoDado}</Text>
+        <Text style={styles.Text_box}>{ultimoDado}</Text>
 
       </View>
       
