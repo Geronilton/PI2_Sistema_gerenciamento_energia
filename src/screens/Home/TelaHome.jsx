@@ -1,141 +1,101 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { ref, get, query, orderByKey, limitToLast } from 'firebase/database';
+import { ref, get, query, orderByKey, limitToLast, onValue } from 'firebase/database';
 import { realtimeDb } from '../../../services/firebaseConfig';
-
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart
-} from "react-native-chart-kit";
+import { LineChart, StackedBarChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 
 const screenWidth = Dimensions.get("window").width;
 
 export default function Home() {
-
+  
   const [ultimoDado, setUltimoDado] = useState(null);
 
-  // Função para pegar o último dado do Realtime Database
-  const pegarUltimoDadoDoFirebase = async (caminho) => {
+  const pegarUltimoDadoEmTempoReal = (caminho) => {
     try {
-      // Cria a query para ordenar por chave e limitar a 1 resultado
       const dadoRef = query(ref(realtimeDb, caminho), orderByKey(), limitToLast(1));
-      
-      // Executa a consulta e pega o snapshot dos dados
-      const snapshot = await get(dadoRef);
-      const dados = snapshot.val();  // Pega os dados do snapshot
-  
-      if (dados) {
-        const ultimoDado = Object.values(dados)[0];  // Pega o primeiro (e único) valor da lista de dados
-        console.log("Último dado:", ultimoDado);
-        return ultimoDado;
-      }
-  
-      return null;  // Retorna null se não houver dados
+
+      // Escuta as mudanças no banco de dados em tempo real
+      onValue(dadoRef, (snapshot) => {
+        const dados = snapshot.val();
+
+        if (dados) {
+          const [key] = Object.keys(dados);
+          const ultimoDadoString = dados[key];
+          const ultimoDado = JSON.parse(ultimoDadoString);
+
+          if (ultimoDado && ultimoDado.corrente !== undefined) {
+            console.log("Corrente recebida:", ultimoDado.corrente);
+            setUltimoDado(ultimoDado.corrente); // Atualiza o estado com a corrente recebida
+          } else {
+            console.log("Corrente não encontrada.");
+            setUltimoDado(null);
+          }
+        } else {
+          setUltimoDado(null); // Se não houver dados, define como null
+        }
+      }, (error) => {
+        console.error("Erro ao buscar o dado do Firebase: ", error);
+      });
     } catch (error) {
-      console.error("Erro ao buscar o último dado do Firebase: ", error);
-      return null;  // Retorna null em caso de erro
+      console.error("Erro ao buscar o dado em tempo real: ", error);
     }
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const resultado = await pegarUltimoDadoDoFirebase("sensores/correnteG");  // Passa o caminho do dado
-      setUltimoDado(resultado);  // Atualiza o estado com o dado recebido
-      console.log(resultado);
-    };
+    pegarUltimoDadoEmTempoReal("sensores/correnteG"); // Pega os dados em tempo real do caminho específico
+  }, []);
 
-    fetchData();  // Chama a função para buscar os dados
-  }, []);
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.box}>
-        <Text style={styles.Text_box}>R$: 9.999,99</Text>
-        <Text style={styles.Text_box}>{ultimoDado}</Text>
+          <Text className="Home"></Text>
+          <Text></Text>
+          <Text style={styles.Text_box}>
+            {ultimoDado !== null ? `Corrente: ${ultimoDado}A` : "Nenhum dado disponível"}
+          </Text>
 
       </View>
       
-      
-      
       <View style={styles.box_1}>
-      <LineChart
-    data={{
-      labels: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
-      datasets: [
-        {
-          data: [
-            
-            ultimoDado
-          
-          ]
-        }
-      ]
-    }}
-    width={355} // from react-native
-    height={170}
-    yAxisLabel="W "
-    // yAxisSuffix="k"
-    yAxisInterval={1} // optional, defaults to 1
-    const chartConfig = {{
-      backgroundGradientFrom: "transparent",
-      backgroundGradientFromOpacity: 20,
-      backgroundGradientTo: "transparent",
-      backgroundGradientToOpacity: 0.5,
-      color: (opacity = 1) => `rgba(255, 255, 255, 0.8), ${opacity})`,
-      strokeWidth: 2, // optional, default 3
-      barPercentage: 0.5,
-      useShadowColorFromDataset: false // optional
-    }}
-    bezier
-    style={{
-      marginVertical: 15,
-      borderRadius: 16,
-      alignItems: 'center'
-    }}
-  />
-      </View>
-      
-      
-      
-      <View style={styles.box_2}>
-        {/* <BarChart
-          data = {{
+        <LineChart
+          data={{
             labels: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
             datasets: [
               {
-                data: [10, 45, 28, 80, 99, 43, 30]
+                data: [
+                  ultimoDado !== null && !isNaN(ultimoDado) ? ultimoDado : 0 
+                ]
               }
             ]
           }}
-          width={375}
+          width={355} 
           height={170}
-          strokeWidth={16}
-          radius={32}
-          const chartConfig = {{
-            backgroundGradientFrom: "#1E2923",
-            backgroundGradientFromOpacity: 0,
-            backgroundGradientTo: "#08130D",
-            backgroundGradientToOpacity: 0,
-            color: (opacity = 1) => `rgba(255, 255, 255, 0.8), ${opacity})`,
-            strokeWidth: 2, // optional, default 3
+          yAxisLabel="W "
+          yAxisInterval={1} 
+          chartConfig={{
+            backgroundGradientFrom: "transparent",
+            backgroundGradientFromOpacity: 20,
+            backgroundGradientTo: "transparent",
+            backgroundGradientToOpacity: 0.5,
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            strokeWidth: 2, 
             barPercentage: 0.5,
-            useShadowColorFromDataset: false // optional
+            useShadowColorFromDataset: false 
           }}
+          bezier
           style={{
-            alignItems: 'center',
-            marginVertical: 15
+            marginVertical: 15,
+            borderRadius: 16,
+            alignItems: 'center'
           }}
-          hideLegend={false}
-        /> */}
+        />
+      </View>
+      <View style={styles.box_2}>
         <StackedBarChart
-          
-          data = {{
+          data={{
             labels: ["Test1", "Test2"],
             legend: ["L1", "L2", "L3"],
             data: [
@@ -146,7 +106,7 @@ export default function Home() {
           }}
           width={300}
           height={170}
-          chartConfig = {{
+          chartConfig={{
             backgroundGradientFrom: "transparent",
             backgroundGradientFromOpacity: 0,
             backgroundGradientTo: "transparent",
@@ -200,5 +160,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#5f6ab0',
     borderRadius: 20
   }
-
 });
