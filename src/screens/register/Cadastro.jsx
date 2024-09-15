@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { Text, View, TextInput, TouchableOpacity,Image, Alert } from 'react-native'
 import styles from './style/style_Cad_Login';
 import Logo from '../../images/Logo.png'
-import { auth, db } from '../../../services/firebaseConfig';
+import { auth, realtimeDb } from '../../../services/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { ref, set } from 'firebase/database';
+
 
 export default function CadastroUser({ navigation }) {
 
@@ -22,28 +23,27 @@ export default function CadastroUser({ navigation }) {
     else if (password != password2){
       Alert.alert('Erro', 'As senhas não conferem')
     }else{
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const userId = userCredential.user.uid;
-      
-      await setDoc(doc(db, 'users',userId), {
-        name: name,
-        email: email,
-      });
-
-      setNome('');
-      setEmail('');
-      setPassword('');
-      setPassword2('');
-      navigation.navigate('Login');
-      Alert.alert('Sucesso', 'Usuário criado com sucesso!');
-      
-      console.log('Documento criado no Firestore para o usuário:', userId);
-
-    } catch (error) {
-      console.error('Erro ao criar usuário:', error);
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userId = userCredential.user.uid;
+  
+        // Enviando dados para o Realtime Database
+        await set(ref(realtimeDb, 'users/' + userId), {
+          name: name,
+          email: email,
+        });
+  
+        setNome('');
+        setEmail('');
+        setPassword('');
+        setPassword2('');
+        Alert.alert('Sucesso', 'Usuário criado com sucesso!');
+  
+        console.log('Dados enviados para o Realtime Database para o usuário:', userId);
+      } catch (error) {
+        console.error('Erro ao criar usuário:', error);
+      }
     }
-  }
   };
 
   return (
