@@ -1,8 +1,10 @@
 import { Text, View, Image, Pressable, FlatList } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import styles from './style/MyStyle';
+import logo from '../../images/Logo.png'
 import { getAuth, signOut } from 'firebase/auth';
-import { getDatabase, ref, get, onValue } from 'firebase/database'; // Certifique-se de importar corretamente
+import { ref, get, onValue } from 'firebase/database'; // Certifique-se de importar corretamente
+import { realtimeDb } from '../../../services/firebaseConfig';
 
 export default function Perfil({ navigation }) {
     const [dados, setDados] = useState({});
@@ -11,40 +13,30 @@ export default function Perfil({ navigation }) {
     const user = auth.currentUser;
     const userId = user ? user.uid : null;
 
-    // Fetch user data from Realtime Database
-    useEffect(() => {
-        if (user) {
-            setDados(prevState => ({
-                ...prevState,
-                email: user.email // Email do Firebase Auth
-            }));
-        }
-    }, [user]);
-
-    // Fetch nome from Realtime Database
     useEffect(() => {
         if (userId) {
-            const db = getDatabase();
-            const userRef = ref(db, `Usuarios/${userId}/nome`); // Ajuste conforme a estrutura do banco de dados
+            const userRef = ref(realtimeDb, `users/${userId}`);
             get(userRef).then((snapshot) => {
                 if (snapshot.exists()) {
-                    setDados(prevState => ({
-                        ...prevState,
-                        nome: snapshot.val() // Nome do Realtime Database
-                    }));
+                    const userData = snapshot.val();
+                    console.log("dados usuario",userData)
+                    setDados({  
+                        email: userData.email || 'Email não disponível',
+                        name: userData.name || 'Nome não disponível'
+                    });
+                    console.log("dados usuario",userData)
                 } else {
-                    console.log('No data available');
+                    console.log('Nenhum dado disponível');
                 }
             }).catch((error) => {
-                console.error('Error fetching name: ', error);
+                console.error('Erro ao buscar dados do usuário: ', error);
             });
         }
     }, [userId]);
 
     useEffect(() => {
         if (userId) {
-            const db = getDatabase();
-            const dbRef = ref(db, 'sensores/corrente');
+            const dbRef = ref(realtimeDb, 'sensores/correnteG');
             const unsubscribe = onValue(dbRef, (snapshot) => {
                 const data = [];
                 snapshot.forEach((childSnapshot) => {
@@ -104,14 +96,15 @@ export default function Perfil({ navigation }) {
     return (
         <View style={styles.container}>
             <View style={styles.botaoSession}>
-                <Pressable onPress={logout}>
-                    <Text style={{ fontSize: 15, fontWeight: 'bold' }}>Sair</Text>
+                <Pressable style={{width:50, height:25,alignItems: 'center'}}
+                 onPress={logout}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color:'#f4f4f4'}}>Sair</Text>
                 </Pressable>
             </View>
             <View style={styles.perfil}>
-                <Image style={styles.image} source={require('../../images/Logo.png')} />
+                <Image style={styles.image} source={logo} />
                 <View style={styles.nome}>
-                    <Text style={styles.titlename}>{dados.nome}</Text>
+                    <Text style={styles.titlename}>{dados.name}</Text>
                 </View>
             </View>
             <View style={styles.info}>
