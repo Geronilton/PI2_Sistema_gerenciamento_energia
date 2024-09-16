@@ -18,9 +18,13 @@ export default styles = StyleSheet.create({
         justifyContent:'center',
     },
     perfil:{
-        flexDirection: 'row',
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-around',
         gap: 10,
-        padding:30,
+        padding:10,
+        width:392,
+        
     },
     nome:{
         alignItems:"center",
@@ -55,17 +59,17 @@ export default styles = StyleSheet.create({
         
     },
     image:{
-        width:100,
-        height:100,
-        padding:90,
+        width:120,
+        height:120,
+
     },
     tabela:{
         backgroundColor:'#c8c8c8',
-        paddingLeft: 20,
-        paddingRight: 20,
-        borderRadius:10,
+        paddingLeft: 10,
+        paddingRight: 10,
+        borderRadius:8,
         flexDirection: 'column',
-        width:'100%',
+        width:'90%',
         shadowRadius:2,
     },
     tabelaid:{
@@ -73,11 +77,9 @@ export default styles = StyleSheet.create({
         justifyContent:'space-between',
         paddingRight:12,
         paddingLeft:12,
-        flex:1,
         width:'100%'
     },
     tabdados: {
-        color: '#fff',
         fontWeight:'bold',
         fontSize:20,
         padding:6,
@@ -89,5 +91,6 @@ export default styles = StyleSheet.create({
         padding:6,
         top: 8,
         shadowRadius:2,
-    }
+    },
+
 })

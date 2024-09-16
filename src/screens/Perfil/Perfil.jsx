@@ -15,83 +15,98 @@ export default function Perfil({ navigation }) {
 
     useEffect(() => {
         if (userId) {
-            const userRef = ref(realtimeDb, `users/${userId}`);
-            get(userRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    console.log("dados usuario",userData)
-                    setDados({  
-                        email: userData.email || 'Email não disponível',
-                        name: userData.name || 'Nome não disponível'
+            const fetchData = async () => {
+                try {
+                    // Buscar dados do usuário
+                    const userRef = ref(realtimeDb, `users/${userId}`);
+                    const userSnapshot = await get(userRef);
+                    if (userSnapshot.exists()) {
+                        const userData = userSnapshot.val();
+                        setDados({  
+                            email: userData.email || 'Email não disponível',
+                            name: userData.name || 'Nome não disponível'
+                        });
+                    } else {
+                        console.log('Nenhum dado disponível');
+                    }
+
+                    // Buscar dados dos sensores
+                    const dbRef = ref(realtimeDb, 'sensores/correnteG');
+                    const unsubscribe = onValue(dbRef, (snapshot) => {
+                        const data = [];
+                        snapshot.forEach((childSnapshot) => {
+                            const itemString = childSnapshot.val();
+                            const item = JSON.parse(itemString);
+                            const timestamp = new Date(item.timestamp); 
+                            const corrente = parseFloat(item.corrente);
+                            data.push({
+                                id: childSnapshot.key,
+                                corrente: !isNaN(corrente) ? corrente : 0, 
+                                timestamp,
+                            });
+                        });
+                        
+                        const organizedData = organizeDataByMonth(data);
+                        setHistorico(organizedData);
                     });
-                    console.log("dados usuario",userData)
-                } else {
-                    console.log('Nenhum dado disponível');
+
+                    return () => unsubscribe();
+
+                } catch (error) {
+                    console.error('Erro ao buscar dados: ', error);
                 }
-            }).catch((error) => {
-                console.error('Erro ao buscar dados do usuário: ', error);
-            });
+            };
+            fetchData();
         }
     }, [userId]);
-
-    useEffect(() => {
-        if (userId) {
-            const dbRef = ref(realtimeDb, 'sensores/correnteG');
-            const unsubscribe = onValue(dbRef, (snapshot) => {
-                const data = [];
-                snapshot.forEach((childSnapshot) => {
-                    const item = childSnapshot.val();
-                    const timestamp = new Date(item.timestamp); // Ajuste conforme o formato de timestamp
-                    data.push({
-                        id: childSnapshot.key,
-                        corrente: item.corrente,
-                        timestamp,
-                    });
-                });
-                const organizedData = organizeDataByMonth(data);
-                setHistorico(organizedData);
-            });
-
-            return () => unsubscribe();
-        }
-    }, [userId]);
-
-    // Function to organize data by month
+    
     const organizeDataByMonth = (data) => {
-        const months = Array.from({ length: 12 }, (_, i) => i + 1); // Meses de 1 a 12
-        const result = months.map(month => {
+        const monthNames = [
+            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+        ];
+        const currentYear = new Date().getFullYear();
+    
+        const result = monthNames.map((monthName, index) => {
+            const month = index + 1; // O índice do array começa em 0, por isso somamos 1
             const monthlyData = data.filter(item => {
                 const date = item.timestamp;
-                return date.getMonth() + 1 === month;
+                return date.getMonth() + 1 === month && date.getFullYear() === currentYear;
             });
-            const totalCorrente = monthlyData.reduce((sum, item) => sum + item.corrente, 0);
-            return { mes: month, corrente: totalCorrente };
+    
+            const totalCorrente = monthlyData.reduce((sum, item) => sum + (item.corrente || 0), 0); // Soma a corrente, garantindo que o valor seja numérico
+    
+            return { mes: monthName, totalCorrente: totalCorrente }; // Retorna o nome do mês e o consumo total
         });
+    
         return result;
     };
 
-    // Render each item of the month
-    const renderItem = ({ item }) => (
-        <View>
-            <View style={styles.tabelaid}>
-                <Text style={styles.tabdados}>{`Mês ${item.mes} :`}</Text>
-                <Text style={styles.tabdados}>{item.corrente.toFixed(2) || '-'}</Text>
-            </View>
-        </View>
-    );
-    
 
-    // Função de logout
     function logout() {
         signOut(auth)
             .then(() => {
-                // Redireciona para a página de login ou inicial
-                navigation.replace('Login'); // Ajuste conforme o roteamento que você está utilizando
+                navigation.replace('Login'); 
             })
             .catch((error) => {
                 console.error('Error during sign out: ', error);
             });
     }
+
+    const renderItem = ({ item }) => (
+        <View>                
+            
+            <View style={styles.tabelaid}>
+                <Text style={styles.tabdados}>{`${item.mes} `}</Text> 
+                <Text style={styles.tabdados}>
+                    {item.totalCorrente !== undefined && !isNaN(item.totalCorrente)
+                        ? `Consumo total: ${item.totalCorrente.toFixed(2)}`
+                        : '-'}
+                </Text>
+              
+            </View>
+        </View>
+    );
 
     return (
         <View style={styles.container}>
