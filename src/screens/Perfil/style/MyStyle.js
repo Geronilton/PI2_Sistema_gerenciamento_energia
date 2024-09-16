@@ -55,8 +55,7 @@ export default styles = StyleSheet.create({
     },
     text: {
         color: '#black',
-        fontSize:20,
-        
+        fontSize:20,     
     },
     image:{
         width:120,
@@ -64,7 +63,6 @@ export default styles = StyleSheet.create({
 
     },
     tabela:{
-        backgroundColor:'#c8c8c8',
         paddingLeft: 10,
         paddingRight: 10,
         borderRadius:8,
@@ -73,11 +71,17 @@ export default styles = StyleSheet.create({
         shadowRadius:2,
     },
     tabelaid:{
+        marginTop:5,
+        marginBottom:8,
         flexDirection: 'row',
         justifyContent:'space-between',
-        paddingRight:12,
-        paddingLeft:12,
-        width:'100%'
+        padding:8,
+        width:'100%',
+        borderWidth:1,
+        borderColor:'black',
+        borderRadius:8,
+        backgroundColor:'#c8c8c8',
+        shadowRadius: 10,
     },
     tabdados: {
         fontWeight:'bold',
