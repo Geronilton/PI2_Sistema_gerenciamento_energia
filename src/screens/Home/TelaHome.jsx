@@ -54,7 +54,7 @@ export default function Home() {
           <Text className="Home"></Text>
           <Text></Text>
           <Text style={styles.Text_box}>
-            {ultimoDado !== null ? `Corrente: ${ultimoDado}A` : "Nenhum dado disponível"}
+            {ultimoDado !== null ? `Corrente: ${ultimoDado} A` : "Nenhum dado disponível"}
           </Text>
 
       </View>
@@ -96,13 +96,12 @@ export default function Home() {
       <View style={styles.box_2}>
         <StackedBarChart
           data={{
-            labels: ["Test1", "Test2"],
-            legend: ["L1", "L2", "L3"],
+            labels: ["Nivel"],
+            legend: ["L1"],
             data: [
-              [60, 60, 60],
-              [30, 30, 60]
+              [60, 60, 60]
             ],
-            barColors: ["#dfe4ea", "#ced6e0", "#a4b0be"]
+            barColors: ["green", "orange", "red"]
           }}
           width={300}
           height={170}
