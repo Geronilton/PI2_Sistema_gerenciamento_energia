@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, View, Text, Image, Modal, FlatList, TextInput, Pressable, StyleSheet, Button } from "react-native";
-import { ref, set, get } from 'firebase/database';
+import { getDatabase, ref, set, get, push, remove } from 'firebase/database';
 import Styles from "./Style/MyStyles_tomadas";
 import {realtimeDb } from "../../../services/firebaseConfig";
+//import {db} from "../../../Data-base";
 
 export default function TelaTomadas() {
     const TOMADA = [];
@@ -52,7 +53,7 @@ export default function TelaTomadas() {
             return;
         }
         const novaTomada = {
-            id: contador.toString(),
+            //id: contador.toString(),
             equipamento: equipamento,
             watts: '100',
             kwh: '0.5',
@@ -60,11 +61,15 @@ export default function TelaTomadas() {
         };
 
         try {
-            const docRef = await addDoc(collection(db, 'tomadas'), novaTomada);
-            console.log("Tomada cadastrada com sucesso com ID: ", docRef.id);
+            //const docRef = await addDoc(collection(db, 'tomada'), novaTomada);
+            const tomadaRef = ref(realtimeDb,"Tomada/");
+            const novaTomadaRef = push(tomadaRef);
+            await set(novaTomadaRef, novaTomada);
 
-            setTomada([...tomada, novaTomada]);
-            setContador(contador + 1);
+            console.log("Tomada cadastrada com sucesso com ID: ");
+
+            setTomada([...tomada,{ ...novaTomada, id:novaTomadaRef.key }]);
+            //setContador(contador + 1);
             setModalVisible(false);
             setEquipamento('');
         } catch (e) {
@@ -73,22 +78,35 @@ export default function TelaTomadas() {
     };
 
     const excluirTela = async (id) => {
-        try {
-            await deleteDoc(doc(db, "tomada", id));
+        try { 
+            //await deleteDoc(doc(db, "tomada", id));
+            const tomadaRef = ref(realtimeDb, `tomada/${id}`);
+            await remove(tomadaRef);
+
             setTomada(tomada.filter(item => item.id !==id));
+            console.log("tomada excluida com sucesso !!!");
         } catch (e) {
             console.error("Erro ao excluir sua tomada ID: ", e);
         }
     };
 
     const botaoONOFF = async (id) => {
+        const tomadaAtual = tomada.find(item => item.id === id);
+        const novoEstado = !tomadaAtual.estado;
+
         try {
-            await updateDoc(doc(db, "tomadas", id), {
+            const tomadaRef = ref(realtimeDb, `tomada/${id}`);
+
+            await update(tomadaRef, {
                 estado: novoEstado,
+            //await updateDoc(doc(db, "tomadas", id), {
+            //    estado: novoEstado,
             });
             setTomada(tomada.map(item => 
-                item.id === id ? { ...item, estado: !item.estado} : item
+                item.id === id ? { ...item, estado: novoEstado} : item
             ));
+
+            console.log(tomada, "Tomada atualizada com sucesso!!!");
         } catch (e) {
             console.error("Erro ao atualizar a tomada", e);
         }

@@ -4,6 +4,7 @@ import { getAnalytics } from "firebase/analytics";
 
 //adicionei para se conectar ao farebase e pegar as informações que a tela de cadastro de tomadas necessitam
 import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { getDatabase, ref, set, push,remove, update } from "firebase/database";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,10 +19,11 @@ const firebaseConfig = {
   messagingSenderId: "889899496447",
   appId: "1:889899496447:web:898ff9385b6784b891adca",
   measurementId: "G-DYFMNY8GMK",
+  databaseURL: "https://sgenergia-residencial-default-rtdb.firebaseio.com/"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 //adicionei para se conectar ao farebase e pegar as informações que a tela de cadastro de tomadas necessitam
-const db = getFirestore( app );
+const db = getDatabase( app );
