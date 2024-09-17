@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, View, Text, Image, Modal, FlatList, TextInput, Pressable, StyleSheet, Button } from "react-native";
-import { ref, set, get } from 'firebase/database';
+import { ref, set, get, remove } from 'firebase/database';
 import Styles from "./Style/MyStyles_tomadas";
 import {realtimeDb } from "../../../services/firebaseConfig";
 
@@ -60,8 +60,10 @@ export default function TelaTomadas() {
         };
 
         try {
-            const docRef = await addDoc(collection(db, 'tomadas'), novaTomada);
-            console.log("Tomada cadastrada com sucesso com ID: ", docRef.id);
+          const tomadaRef = ref(realtimeDb, 'Tomada/' + novaTomada.id);
+          await set(tomadaRef, novaTomada);
+  
+          console.log("Tomada cadastrada com sucesso com ID: ", novaTomada.id);
 
             setTomada([...tomada, novaTomada]);
             setContador(contador + 1);
@@ -74,8 +76,11 @@ export default function TelaTomadas() {
 
     const excluirTela = async (id) => {
         try {
-            await deleteDoc(doc(db, "tomada", id));
-            setTomada(tomada.filter(item => item.id !==id));
+            const tomadaRef = ref(realtimeDb, 'Tomada/' + id);
+            await remove(tomadaRef);
+    
+            console.log(`Tomada com ID ${id} deletada com sucesso`);
+            setTomada(tomada.filter(tomada => tomada.id !== id));
         } catch (e) {
             console.error("Erro ao excluir sua tomada ID: ", e);
         }
@@ -104,7 +109,7 @@ export default function TelaTomadas() {
                 <Text>{item.id}</Text>
             </View>
             <View style={Styles.containerInfoTomada}>
-                <Text>{item.equipamento}</Text>
+                <Text style={{fontSize:20}}>{item.equipamento}</Text>
                 <View style={Styles.tomadaCadastradaInfo}>
                     <Text>{item.watts} watts</Text>
                     <Text>{item.kwh} kwh</Text>
@@ -124,9 +129,7 @@ export default function TelaTomadas() {
                         style={Styles.botaoTomada1}
                         onPress={() => excluirTela(item.id)}
                     >
-                        <View>
-                            <Text>EXCLUIR</Text>
-                        </View>
+                            <Text style={{color:'white'}}>EXCLUIR</Text> 
                     </TouchableOpacity>
 
             </View>
