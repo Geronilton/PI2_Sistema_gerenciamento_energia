@@ -156,7 +156,8 @@ const styles = StyleSheet.create({
     height: 150,
     width: 360,
     backgroundColor: '#c6c6c6',
-    borderRadius: 20
+    borderRadius: 10
+
   },
   box_1:{
     height: 230,
