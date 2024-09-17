@@ -39,7 +39,7 @@ export default styles = StyleSheet.create({
     },
     historico:{
         color:'black',
-        padding:25,
+        padding:15,
         fontWeight:'bold',
         fontSize:20,
     },
@@ -67,7 +67,7 @@ export default styles = StyleSheet.create({
         paddingRight: 10,
         borderRadius:8,
         flexDirection: 'column',
-        width:'90%',
+        width:'95%',
         shadowRadius:2,
     },
     tabelaid:{
