@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, View, Text, Image, Modal, FlatList, TextInput, Pressable, StyleSheet, Button } from "react-native";
-import { getDatabase, ref, set, get, push, remove } from 'firebase/database';
+import { getDatabase, ref, set, get, push, remove, onValue } from 'firebase/database';
 import Styles from "./Style/MyStyles_tomadas";
 import {realtimeDb } from "../../../services/firebaseConfig";
 //import {db} from "../../../Data-base";
@@ -9,9 +9,10 @@ export default function TelaTomadas() {
     const TOMADA = [];
     const [modalVisible, setModalVisible] = useState(false);
     const [equipamento, setEquipamento] = useState('');
-    const [contador, setContador] = useState(1);
+    //const [contador, setContador] = useState(1);
     const [tomada, setTomada] = useState(TOMADA);
     const [releState, setReleState] = useState('OFF');
+    const [ultimoId, setUltimoId] = useState(0);
 
     // Função para buscar o estado inicial do relé do Realtime Database
     const fetchReleState = async () => {
@@ -52,6 +53,7 @@ export default function TelaTomadas() {
             alert('por favor, insira o nome do equipamento.');
             return;
         }
+        const novoID = ultimoId + 1;
         const novaTomada = {
             //id: contador.toString(),
             equipamento: equipamento,
@@ -62,16 +64,17 @@ export default function TelaTomadas() {
 
         try {
             //const docRef = await addDoc(collection(db, 'tomada'), novaTomada);
-            const tomadaRef = ref(realtimeDb,"Tomada/");
+            const tomadaRef = ref(realtimeDb, `Tomada/${novoID}`);
             const novaTomadaRef = push(tomadaRef);
             await set(novaTomadaRef, novaTomada);
 
-            console.log("Tomada cadastrada com sucesso com ID: ");
+            console.log(`Tomada cadastrada com sucesso com ID: ${novoID}`);
 
-            setTomada([...tomada,{ ...novaTomada, id:novaTomadaRef.key }]);
+            setTomada([...tomada,{ ...novaTomada, id:novoID }]);
             //setContador(contador + 1);
             setModalVisible(false);
             setEquipamento('');
+            setUltimoId(novoID);
         } catch (e) {
             console.error("Erro ao adicionar a tomada", e);
         }
@@ -151,6 +154,30 @@ export default function TelaTomadas() {
         </View>
     );
 
+    const buscarTomada = () => {
+        const tomadaRef = ref(realtimeDb, 'Tomada/');
+        onValue(tomadaRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const listaTomadas = Object.keys(data).map(key => ({
+                    id: parseInt(key),
+                    ...data[key]
+                }));
+                setTomada(listaTomadas);
+
+                const maiorID = Math.max(...listaTomadas.map(item => item.id), 0);
+                setUltimoId(maiorID);
+            } else {
+                setTomada([ ]);
+                setUltimoId(0);
+            }
+        });
+    };
+
+    useEffect(() => {
+        buscarTomada();
+    }, []);
+
     return (
         <View style={Styles.container}>
             <View style={Styles.textoTomada}>
@@ -159,7 +186,7 @@ export default function TelaTomadas() {
             <FlatList
                 data={tomada}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.id.toString()}
             />
             <View>
                 <TouchableOpacity
