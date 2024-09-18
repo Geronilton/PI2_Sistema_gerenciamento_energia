@@ -110,7 +110,25 @@ export default function TelaTomadas() {
         } catch (e) {
             console.error("Erro ao atualizar a tomada", e);
         }
+
     };
+    // function calcularCustokw(ultimoDado) {
+    //     const tensao = 220; // Tensão em Volts
+    //     const tempo = 1;  // Tempo em horas
+  
+    //     // Transformar mha em amper
+  
+    //     const corrente = ultimoDado / 1000;
+      
+    //     // Calcula a potência em kW (P = V * I)
+    //     const potenciaKW = ( corrente * tensao) / 1000;
+      
+    //     // Calcula o consumo de energia em kWh (P * t)
+    //     const consumoKWh = potenciaKW * tempo;
+      
+    //     return consumoKWh;
+    //   }
+    //   const custokw = calcularCustokw(ultimoDado);
 
     const renderItem = ({ item }) => (
         <View style={Styles.tomadaCadastrada}>

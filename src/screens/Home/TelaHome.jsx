@@ -5,6 +5,7 @@ import { ref, get, query, orderByKey, limitToLast, onValue } from 'firebase/data
 import { realtimeDb } from '../../../services/firebaseConfig';
 import { LineChart, StackedBarChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
+import { namedQuery } from 'firebase/firestore';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -47,6 +48,45 @@ export default function Home() {
     pegarUltimoDadoEmTempoReal("sensores/correnteG"); // Pega os dados em tempo real do caminho específico
   }, []);
 
+// const UltimosDadosPorSemana = () => {
+//   const [ultimosDados, setUltimosDados] = useState({});
+//   const diasDaSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+
+//   useEffect(() => {
+//     // Função para pegar o último dado de cada dia da semana
+//     async function fetchDados() {
+//       const db = getDatabase();
+//       const dadosRef = ref(db, 'dados'); // Supondo que os dados estão no caminho 'dados'
+
+//       const snapshot = await get(query(dadosRef, orderByChild('data')));
+
+//       if (snapshot.exists()) {
+//         const dados = snapshot.val();
+//         const ultimosDadosPorDia = {};
+
+//         // Percorrer os dados e pegar o último de cada dia
+//         Object.keys(dados).forEach(key => {
+//           const dado = dados[key];
+//           const dataObj = new Date(dado.data);
+//           const diaSemana = diasDaSemana[dataObj.getDay()];
+
+//           // Atualiza se o dado atual for mais recente ou se ainda não houver dado para esse dia
+//           if (!ultimosDadosPorDia[diaSemana] || new Date(ultimosDadosPorDia[diaSemana].data) < dataObj) {
+//             ultimosDadosPorDia[diaSemana] = dado;
+//           }
+//         });
+
+//         setUltimosDados(ultimosDadosPorDia);
+//       }
+//     }
+
+//     fetchDados();
+//   }, []);
+  
+
+
+
+
     function calcularCustoEnergia(ultimoDado, precoPorKWh = 0.88) {
       const tensao = 220; // Tensão em Volts
       const tempo = 1;  // Tempo em horas
@@ -82,7 +122,7 @@ export default function Home() {
       </View>
       
       <View style={styles.box_1}>
-      <Text style={styles.Text}>Media</Text>
+      <Text style={styles.Text}>Media de Custo</Text>
         
       <StackedBarChart
           data={{
@@ -115,21 +155,27 @@ export default function Home() {
         
       </View>
       <View style={styles.box_2}>
-        <Text style={styles.Text}>Semanal</Text>
+        <Text style={styles.Text}>Consumo Semanal</Text>
       <LineChart
           data={{
             labels: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
             datasets: [
               {
                 data: [
-                  ultimoDado !== null && !isNaN(ultimoDado) ? ultimoDado : 0 
+                  0,
+                  4227,
+                  645.19,
+                  ultimoDado !== null && !isNaN(ultimoDado) ? ultimoDado : 0,
+                  0,
+                  0,
+                  0 
                 ]
               }
             ]
           }}
-          width={355} 
+          width={345} 
           height={190}
-          yAxisLabel="W "
+          yAxisLabel="A "
           yAxisInterval={1} 
           chartConfig={{
             backgroundGradientFrom: "#5f6ab0",
