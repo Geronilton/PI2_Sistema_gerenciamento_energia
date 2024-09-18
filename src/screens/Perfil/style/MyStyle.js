@@ -18,9 +18,13 @@ export default styles = StyleSheet.create({
         justifyContent:'center',
     },
     perfil:{
-        flexDirection: 'row',
+        display:'flex',
+        flexDirection:'row',
+        justifyContent:'space-around',
         gap: 10,
-        padding:30,
+        padding:10,
+        width:392,
+        
     },
     nome:{
         alignItems:"center",
@@ -35,7 +39,7 @@ export default styles = StyleSheet.create({
     },
     historico:{
         color:'black',
-        padding:25,
+        padding:15,
         fontWeight:'bold',
         fontSize:20,
     },
@@ -51,33 +55,35 @@ export default styles = StyleSheet.create({
     },
     text: {
         color: '#black',
-        fontSize:20,
-        
+        fontSize:20,     
     },
     image:{
-        width:100,
-        height:100,
-        padding:90,
+        width:120,
+        height:120,
+
     },
     tabela:{
-        backgroundColor:'#c8c8c8',
-        paddingLeft: 20,
-        paddingRight: 20,
-        borderRadius:10,
+        paddingLeft: 10,
+        paddingRight: 10,
+        borderRadius:8,
         flexDirection: 'column',
-        width:'100%',
+        width:'95%',
         shadowRadius:2,
     },
     tabelaid:{
+        marginTop:5,
+        marginBottom:8,
         flexDirection: 'row',
         justifyContent:'space-between',
-        paddingRight:12,
-        paddingLeft:12,
-        flex:1,
-        width:'100%'
+        padding:8,
+        width:'100%',
+        borderWidth:1,
+        borderColor:'black',
+        borderRadius:8,
+        backgroundColor:'#c8c8c8',
+        shadowRadius: 10,
     },
     tabdados: {
-        color: '#fff',
         fontWeight:'bold',
         fontSize:20,
         padding:6,
@@ -89,5 +95,6 @@ export default styles = StyleSheet.create({
         padding:6,
         top: 8,
         shadowRadius:2,
-    }
+    },
+
 })
