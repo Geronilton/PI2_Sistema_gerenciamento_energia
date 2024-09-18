@@ -19,9 +19,9 @@ export default styles = StyleSheet.create({
         borderRadius: 5,
     },
     tomadaCadastrada: {
-        backgroundColor:'#0A4793' ,
+        backgroundColor: '#c6c6c6',
         width: 350,
-        padding: 'auto',
+        padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
         margin: 5,
@@ -29,7 +29,7 @@ export default styles = StyleSheet.create({
         flexDirection: 'row', 
     },
     tomadaCadastradaInfo: {
-        backgroundColor: '#c6c6c6',
+        backgroundColor: 'white',
         width: 200,
         padding: 10,
         alignItems: 'center',
@@ -63,6 +63,7 @@ export default styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
+        color: 'white',
     },
     botao_Tomada: {
         color: 'white',
