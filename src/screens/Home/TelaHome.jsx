@@ -47,20 +47,76 @@ export default function Home() {
     pegarUltimoDadoEmTempoReal("sensores/correnteG"); // Pega os dados em tempo real do caminho específico
   }, []);
 
+    function calcularCustoEnergia(ultimoDado, precoPorKWh = 0.88) {
+      const tensao = 220; // Tensão em Volts
+      const tempo = 1;  // Tempo em horas
+
+      // Transformar mha em amper
+
+      const corrente = ultimoDado / 1000;
+    
+      // Calcula a potência em kW (P = V * I)
+      const potenciaKW = ( corrente * tensao) / 1000;
+    
+      // Calcula o consumo de energia em kWh (P * t)
+      const consumoKWh = potenciaKW * tempo;
+    
+      // Calcula o custo em reais
+      const custoReais = consumoKWh * precoPorKWh;
+    
+      return custoReais;
+    }
+    const custo = calcularCustoEnergia(ultimoDado);
+    
+
 
   return (
     <View style={styles.container}>
       <View style={styles.box}>
           <Text className="Home"></Text>
-          <Text></Text>
           <Text style={styles.Text_box}>
-            {ultimoDado !== null ? `Corrente: ${ultimoDado} A` : "Nenhum dado disponível"}
+            {ultimoDado !== null ? `Corrente:  ${ultimoDado}⚡` : "Nenhum dado disponível"}
           </Text>
+          <Text style={styles.Text_box}>O custo é R$: {custo.toFixed(2)}</Text>
 
       </View>
       
       <View style={styles.box_1}>
-        <LineChart
+      <Text style={styles.Text}>Media</Text>
+        
+      <StackedBarChart
+          data={{
+            labels: ["ALTO", "MEDIO", "BAIXO", "real"],
+            data: [
+              [21000],
+              [14000],
+              [8000],
+              [ ultimoDado !== null && !isNaN(ultimoDado) ? ultimoDado : 0 ]
+          
+            ],
+            barColors: [ "#9da3ae" ]
+          }}
+          width={340}
+          height={200}
+          chartConfig={{
+            backgroundGradientFrom: "#5f6ab0",
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientTo: "#5f6ab0",
+            backgroundGradientToOpacity: 0.5,
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            strokeWidth: 2, // optional, default 3
+            barPercentage: 1,
+            useShadowColorFromDataset: false // optional
+          }}
+          style={{
+            alignItems: 'center',
+          }}
+        />
+        
+      </View>
+      <View style={styles.box_2}>
+        <Text style={styles.Text}>Semanal</Text>
+      <LineChart
           data={{
             labels: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
             datasets: [
@@ -72,13 +128,13 @@ export default function Home() {
             ]
           }}
           width={355} 
-          height={170}
+          height={190}
           yAxisLabel="W "
           yAxisInterval={1} 
           chartConfig={{
-            backgroundGradientFrom: "transparent",
-            backgroundGradientFromOpacity: 20,
-            backgroundGradientTo: "transparent",
+            backgroundGradientFrom: "#5f6ab0",
+            backgroundGradientFromOpacity: 2,
+            backgroundGradientTo: "#5f6ab0",
             backgroundGradientToOpacity: 0.5,
             color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
             strokeWidth: 2, 
@@ -87,39 +143,8 @@ export default function Home() {
           }}
           bezier
           style={{
-            marginVertical: 15,
             borderRadius: 16,
-            alignItems: 'center'
-          }}
-        />
-      </View>
-      <View style={styles.box_2}>
-        <StackedBarChart
-          data={{
-            labels: ["Nivel"],
-            legend: ["L1"],
-            data: [
-              [60, 60, 60]
-            ],
-            barColors: ["green", "orange", "red"]
-          }}
-          width={300}
-          height={170}
-          chartConfig={{
-            backgroundGradientFrom: "transparent",
-            backgroundGradientFromOpacity: 0,
-            backgroundGradientTo: "transparent",
-            backgroundGradientToOpacity: 0.5,
-            color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-            strokeWidth: 2, // optional, default 3
-            barPercentage: 0.5,
-            useShadowColorFromDataset: false // optional
-          }}
-          style={{
             alignItems: 'center',
-            marginVertical: 15,
-            color: 'white',
-            fontSize: 50
           }}
         />
       </View>
@@ -135,6 +160,8 @@ const styles = StyleSheet.create({
   },
   Text: {
     fontSize: 20,
+    color: "white",
+    textAlign: 'center'
   },
   Text_box: {
     fontSize: 20,
@@ -142,19 +169,19 @@ const styles = StyleSheet.create({
   },
   box:{
     height: 150,
-    width: 335,
-    backgroundColor: '#707984',
+    width: 360,
+    backgroundColor: '#c6c6c6',
     borderRadius: 20
   },
   box_1:{
-    height: 200,
+    height: 230,
     width: 360,
     backgroundColor: '#5f6ab0',
     margin: 30,
     borderRadius: 20
   },
   box_2:{
-    height: 200,
+    height: 230,
     width: 360,
     backgroundColor: '#5f6ab0',
     borderRadius: 20
