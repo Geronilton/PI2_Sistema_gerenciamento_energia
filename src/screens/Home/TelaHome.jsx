@@ -1,18 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Modal, TouchableOpacity} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { ref, get, query, orderByKey, limitToLast, onValue } from 'firebase/database';
 import { realtimeDb } from '../../../services/firebaseConfig';
 import { LineChart, StackedBarChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
-import { namedQuery } from 'firebase/firestore';
 import styles from './Style/MyStyles_Home';
+import SimpleModal from '../../components/SimpleModal';
+
 
 const screenWidth = Dimensions.get("window").width;
 
 export default function Home() {
+
   
   const [ultimoDado, setUltimoDado] = useState(null);
+  const [somaCorrentePorDia, setSomaCorrentePorDia] = useState(null);
+
 
   const pegarUltimoDadoEmTempoReal = (caminho) => {
     try {
@@ -49,44 +53,6 @@ export default function Home() {
     pegarUltimoDadoEmTempoReal("sensores/correnteG"); // Pega os dados em tempo real do caminho específico
   }, []);
 
-// const UltimosDadosPorSemana = () => {
-//   const [ultimosDados, setUltimosDados] = useState({});
-//   const diasDaSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-
-//   useEffect(() => {
-//     // Função para pegar o último dado de cada dia da semana
-//     async function fetchDados() {
-//       const db = getDatabase();
-//       const dadosRef = ref(db, 'dados'); // Supondo que os dados estão no caminho 'dados'
-
-//       const snapshot = await get(query(dadosRef, orderByChild('data')));
-
-//       if (snapshot.exists()) {
-//         const dados = snapshot.val();
-//         const ultimosDadosPorDia = {};
-
-//         // Percorrer os dados e pegar o último de cada dia
-//         Object.keys(dados).forEach(key => {
-//           const dado = dados[key];
-//           const dataObj = new Date(dado.data);
-//           const diaSemana = diasDaSemana[dataObj.getDay()];
-
-//           // Atualiza se o dado atual for mais recente ou se ainda não houver dado para esse dia
-//           if (!ultimosDadosPorDia[diaSemana] || new Date(ultimosDadosPorDia[diaSemana].data) < dataObj) {
-//             ultimosDadosPorDia[diaSemana] = dado;
-//           }
-//         });
-
-//         setUltimosDados(ultimosDadosPorDia);
-//       }
-//     }
-
-//     fetchDados();
-//   }, []);
-  
-
-
-
 
     function calcularCustoEnergia(ultimoDado, precoPorKWh = 0.88) {
       const tensao = 220; // Tensão em Volts
@@ -111,15 +77,39 @@ export default function Home() {
     
 
 
+    const organizeDataByWeekday = (data) => {
+      const weekdayNames = [
+          'Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 
+          'Quinta-feira', 'Sexta-feira', 'Sábado'
+      ];
+      const currentYear = new Date().getFullYear();
+  
+      // Mapeia cada dia da semana para um objeto contendo o nome e o total de corrente
+      const result = weekdayNames.map((weekdayName, index) => {
+          const dailyData = data.filter(item => {
+              const date = item.timestamp;
+              return date.getDay() === index && date.getFullYear() === currentYear;
+          });
+  
+          const totalCorrente = dailyData.reduce((sum, item) => sum + (parseFloat(item.corrente) || 0), 0); // Soma a corrente convertida para número
+          console.log('total semana', totalCorrente)
+          return { dia: weekdayName, totalCorrente: totalCorrente }; // Retorna o nome do dia da semana e o consumo total
+      });
+  
+      return result;
+  };
+
+
   return (
     <View style={styles.container}>
       <View style={styles.box}>
           <Text className="Home"></Text>
-          <Text></Text>
           <Text style={styles.Text_box}>
             {ultimoDado !== null ? `Corrente:  ${ultimoDado}⚡` : "Nenhum dado disponível"}
           </Text>
-          <Text style={styles.Text_box}>Gasto real em 1 hora de uso R$: {custo.toFixed(2)}</Text>
+          <Text style={styles.Text_box}> R$: {custo.toFixed(2)}</Text>
+
+          <SimpleModal />
 
       </View>
       
@@ -199,4 +189,5 @@ export default function Home() {
     </View>
   );
 }
+
 

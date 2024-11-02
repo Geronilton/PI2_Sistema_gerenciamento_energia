@@ -14,14 +14,16 @@ const styles = StyleSheet.create({
     Text_box: {
       fontSize: 20,
       textAlign: 'center',
-      margin: 5
+      margin: 5,
+      fontWeight:"500"
     },
     box:{
       height: 150,
       width: 360,
-      backgroundColor: '#c6c6c6',
-      borderRadius: 10
-  
+      borderWidth:1,
+      borderRadius: 10,
+      padding:10,
+      backgroundColor: '#EBEBE6',
     },
     box_1:{
       height: 230,
@@ -35,8 +37,10 @@ const styles = StyleSheet.create({
       width: 360,
       backgroundColor: '#5f6ab0',
       borderRadius: 20
-    }
-  });
+    },
+
+    
+});
 
   export default styles;
   
